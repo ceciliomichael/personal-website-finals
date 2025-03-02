@@ -1,0 +1,162 @@
+.world-map {
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  position: relative;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+  overflow: visible;
+}
+
+.map-paths {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-node {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 20px currentColor, 0 0 40px currentColor;
+  transition: all 0.3s ease;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  animation: pulse 2s infinite alternate;
+}
+
+.map-node.active {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 25px currentColor;
+  z-index: 11;
+}
+
+.node-icon {
+  font-size: 2.2rem;
+}
+
+.node-tooltip {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(25, 25, 40, 0.9);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(106, 17, 203, 0.3);
+}
+
+.map-node:hover .node-tooltip {
+  opacity: 1;
+  bottom: -35px;
+}
+
+.map-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.decoration {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+  filter: blur(30px);
+}
+
+.decoration-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--primary-color);
+  top: 20%;
+  left: 10%;
+  animation: float 15s infinite alternate;
+}
+
+.decoration-2 {
+  width: 250px;
+  height: 250px;
+  background: var(--secondary-color);
+  bottom: 15%;
+  right: 15%;
+  animation: float 12s infinite alternate-reverse;
+}
+
+.decoration-3 {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-color);
+  top: 60%;
+  left: 60%;
+  animation: float 18s infinite alternate;
+}
+
+.stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(20px, 20px); }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .map-node {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .node-icon {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-node {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .node-icon {
+    font-size: 1.2rem;
+  }
+  
+  .node-tooltip {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
+} 

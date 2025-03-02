@@ -1,0 +1,217 @@
+.portfolio-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-header {
+  text-align: center;
+  padding: 1.5rem;
+  z-index: 10;
+  background: rgba(15, 15, 26, 0.7);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+}
+
+.portfolio-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-name {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: rgba(248, 249, 250, 0.8);
+}
+
+.world-container {
+  flex: 1;
+  position: relative;
+  overflow: visible;
+  min-height: 600px;
+  display: flex;
+}
+
+/* Fix for react-zoom-pan-pinch component visibility */
+.react-transform-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 600px !important;
+}
+
+.react-transform-component {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 600px !important;
+}
+
+/* Ensure the WorldMap takes up space */
+.world-map {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 600px !important;
+  position: relative;
+}
+
+/* Ensure map nodes are visible */
+.map-node {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100 !important;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  gap: 10px;
+}
+
+.zoom-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(25, 25, 40, 0.8);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(106, 17, 203, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.zoom-controls button:hover {
+  background: rgba(106, 17, 203, 0.8);
+  transform: translateY(-2px);
+}
+
+.zoom-controls .back-button {
+  width: auto;
+  border-radius: 20px;
+  padding: 0 15px;
+}
+
+.achievements-panel {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  background: rgba(25, 25, 40, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  width: 200px;
+  border: 1px solid rgba(106, 17, 203, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.achievements-panel h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+}
+
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.achievement.unlocked {
+  background: rgba(106, 17, 203, 0.3);
+  border: 1px solid rgba(106, 17, 203, 0.5);
+}
+
+.achievement.locked {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.achievement-icon {
+  font-size: 1.2rem;
+}
+
+.achievement-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .portfolio-header h1 {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .achievements-panel {
+    width: 150px;
+    top: 80px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-header {
+    padding: 1rem;
+  }
+  
+  .portfolio-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .zoom-controls button {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .achievements-panel {
+    position: fixed;
+    bottom: 10px;
+    top: auto;
+    right: 10px;
+    width: 120px;
+  }
+  
+  .achievement-title {
+    font-size: 0.8rem;
+  }
+} 

@@ -1,0 +1,149 @@
+.welcome-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-content {
+  text-align: center;
+  z-index: 10;
+  padding: 2rem;
+  max-width: 600px;
+  background: rgba(15, 15, 26, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(106, 17, 203, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-title {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.adventure-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
+  display: inline-block;
+  animation: pulse 3s infinite;
+}
+
+.name-input-container {
+  margin-top: 2rem;
+}
+
+.name-input-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.name-input-container label {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: var(--accent-color);
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.name-input-container input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1.2rem;
+  background: rgba(25, 25, 40, 0.8);
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.name-input-container input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 15px rgba(37, 117, 252, 0.5);
+}
+
+.name-input-container input::placeholder {
+  color: rgba(248, 249, 250, 0.5);
+}
+
+.name-input-container button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-color);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-top: 0.5rem;
+}
+
+.name-input-container button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: linear-gradient(45deg, #4a4a6a, #2a2a3a);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  animation: pulse 2s infinite;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 2.5rem;
+  }
+  
+  .adventure-text {
+    font-size: 2rem;
+  }
+  
+  .name-input-container label {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-title {
+    font-size: 2rem;
+  }
+  
+  .adventure-text {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-content {
+    padding: 1.5rem;
+  }
+  
+  .name-input-container input,
+  .name-input-container button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+  }
+} 

@@ -14,6 +14,7 @@
   background: rgba(15, 15, 26, 0.7);
   backdrop-filter: blur(5px);
   border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+  position: relative;
 }
 
 .portfolio-header h1 {
@@ -29,6 +30,140 @@
 .subtitle {
   font-size: 1.2rem;
   color: rgba(248, 249, 250, 0.8);
+}
+
+/* Profile Icon and Dropdown Styles */
+.profile-icon-container {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+}
+
+.profile-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color), #ff7e5f);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.5);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: rgba(25, 25, 40, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(106, 17, 203, 0.5);
+  overflow: hidden;
+  z-index: 200;
+  backdrop-filter: blur(10px);
+  animation: dropdown-appear 0.3s ease forwards;
+}
+
+@keyframes dropdown-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-dropdown-header {
+  padding: 15px;
+  border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+  text-align: left;
+}
+
+.profile-dropdown-header h3 {
+  margin: 0;
+  color: var(--accent-color);
+  font-size: 1.3rem;
+}
+
+.profile-dropdown-section {
+  padding: 15px;
+  border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+}
+
+.profile-dropdown-section:last-child {
+  border-bottom: none;
+}
+
+.profile-dropdown-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+}
+
+.dropdown-achievements {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.dropdown-achievements::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-achievements::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.dropdown-achievements::-webkit-scrollbar-thumb {
+  background: rgba(106, 17, 203, 0.5);
+  border-radius: 3px;
+}
+
+.danger-button {
+  background: rgba(220, 53, 69, 0.8);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.danger-button:hover {
+  background: rgba(220, 53, 69, 1);
+}
+
+.settings-note {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  text-align: left;
 }
 
 .world-container {
@@ -112,28 +247,6 @@
   padding: 0 15px;
 }
 
-.achievements-panel {
-  position: absolute;
-  top: 100px;
-  right: 20px;
-  background: rgba(25, 25, 40, 0.8);
-  border-radius: 10px;
-  padding: 15px;
-  width: 200px;
-  border: 1px solid rgba(106, 17, 203, 0.5);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  z-index: 50;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-}
-
-.achievements-panel h3 {
-  text-align: center;
-  margin-bottom: 10px;
-  color: var(--accent-color);
-  font-size: 1.2rem;
-}
-
 .achievements-list {
   display: flex;
   flex-direction: column;
@@ -178,10 +291,19 @@
     font-size: 1rem;
   }
   
-  .achievements-panel {
-    width: 150px;
-    top: 80px;
-    right: 10px;
+  .profile-icon-container {
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .profile-avatar {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .profile-dropdown {
+    width: 250px;
   }
 }
 
@@ -203,12 +325,19 @@
     height: 35px;
   }
   
-  .achievements-panel {
-    position: fixed;
-    bottom: 10px;
-    top: auto;
-    right: 10px;
-    width: 120px;
+  .profile-icon-container {
+    top: 0.8rem;
+    right: 0.8rem;
+  }
+  
+  .profile-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+  
+  .profile-dropdown {
+    width: 220px;
   }
   
   .achievement-title {

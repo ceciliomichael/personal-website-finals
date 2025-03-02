@@ -3,8 +3,9 @@
   height: 100%;
   min-height: 600px;
   position: relative;
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: linear-gradient(125deg, #0a0a2a 0%, #1a1a3a 50%, #0a0a2a 100%);
   overflow: visible;
+  box-shadow: inset 0 0 100px rgba(20, 20, 60, 0.7);
 }
 
 .map-paths {
@@ -14,12 +15,13 @@
   width: 100%;
   height: 100%;
   z-index: 1;
+  filter: drop-shadow(0 0 5px rgba(100, 149, 237, 0.5));
 }
 
 .map-node {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -27,42 +29,85 @@
   cursor: pointer;
   z-index: 100;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 20px currentColor, 0 0 40px currentColor;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 
+              0 0 25px rgba(255, 255, 255, 0.15), 
+              0 0 40px currentColor;
   transition: all 0.3s ease;
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  animation: pulse 2s infinite alternate;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(145deg, currentColor, rgba(0, 0, 0, 0.7));
+  margin: 0;
+  padding: 0;
+}
+
+.map-node:after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.map-node:hover:after {
+  opacity: 0.5;
 }
 
 .map-node.active {
-  transform: translate(-50%, -50%) scale(1.2);
-  box-shadow: 0 0 25px currentColor;
+  transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: 0 0 25px currentColor, 
+              0 0 40px currentColor, 
+              0 0 60px currentColor;
   z-index: 11;
 }
 
+.map-node:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
 .node-icon {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-node:hover .node-icon {
+  transform: scale(1.2);
 }
 
 .node-tooltip {
   position: absolute;
-  bottom: -40px;
+  bottom: -45px;
   left: 50%;
-  transform: translateX(-50%);
-  background: rgba(25, 25, 40, 0.9);
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 0.9rem;
+  transform: translateX(-50%) translateY(5px);
+  background: rgba(25, 25, 40, 0.95);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
   white-space: nowrap;
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   pointer-events: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(106, 17, 203, 0.3);
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .map-node:hover .node-tooltip {
   opacity: 1;
-  bottom: -35px;
+  transform: translateX(-50%) translateY(0);
 }
 
 .map-decorations {
@@ -78,35 +123,35 @@
 .decoration {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.1;
-  filter: blur(30px);
+  opacity: 0.15;
+  filter: blur(40px);
 }
 
 .decoration-1 {
-  width: 300px;
-  height: 300px;
-  background: var(--primary-color);
+  width: 350px;
+  height: 350px;
+  background: var(--primary-color, #6a11cb);
   top: 20%;
   left: 10%;
-  animation: float 15s infinite alternate;
+  animation: float 18s infinite alternate;
 }
 
 .decoration-2 {
-  width: 250px;
-  height: 250px;
-  background: var(--secondary-color);
+  width: 300px;
+  height: 300px;
+  background: var(--secondary-color, #2575fc);
   bottom: 15%;
   right: 15%;
-  animation: float 12s infinite alternate-reverse;
+  animation: float 15s infinite alternate-reverse;
 }
 
 .decoration-3 {
-  width: 200px;
-  height: 200px;
-  background: var(--accent-color);
+  width: 250px;
+  height: 250px;
+  background: var(--accent-color, #ff7e5f);
   top: 60%;
   left: 60%;
-  animation: float 18s infinite alternate;
+  animation: float 20s infinite alternate;
 }
 
 .stars {
@@ -114,49 +159,109 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  overflow: hidden;
 }
 
 .star {
   position: absolute;
   background-color: #fff;
   border-radius: 50%;
-  animation: twinkle 3s infinite;
+  animation: twinkle 4s infinite;
+  z-index: 1;
+}
+
+.star::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0.2;
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(0.8); }
 }
 
 @keyframes float {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(20px, 20px); }
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(15px, 15px) rotate(1deg); }
+  50% { transform: translate(5px, 25px) rotate(0deg); }
+  75% { transform: translate(20px, 5px) rotate(-1deg); }
+  100% { transform: translate(25px, 25px) rotate(0deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 25px currentColor, 0 0 40px currentColor; }
+  50% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), 0 0 35px currentColor, 0 0 60px currentColor; }
+}
+
+@keyframes shineSweep {
+  0% { transform: scale(0); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* Shooting star animation */
+.shooting-star {
+  position: absolute;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  height: 2px;
+  border-radius: 50%;
+  animation: shootingStarAnimation 3s linear infinite;
+  opacity: 0;
+  z-index: 2;
+}
+
+@keyframes shootingStarAnimation {
+  0% { transform: translateX(0) translateY(0); width: 0; opacity: 0; }
+  1% { opacity: 1; }
+  5% { width: 100px; opacity: 1; }
+  10% { transform: translateX(300px) translateY(100px); width: 0; opacity: 0; }
+  100% { opacity: 0; }
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
   .map-node {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
   }
   
   .node-icon {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+  }
+  
+  .decoration-1, .decoration-2, .decoration-3 {
+    width: 200px;
+    height: 200px;
   }
 }
 
 @media (max-width: 480px) {
   .map-node {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
+    border-width: 2px;
   }
   
   .node-icon {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .node-tooltip {
     font-size: 0.8rem;
-    padding: 3px 8px;
+    padding: 4px 10px;
+  }
+  
+  .decoration-1, .decoration-2, .decoration-3 {
+    width: 150px;
+    height: 150px;
   }
 } 

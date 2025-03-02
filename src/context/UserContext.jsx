@@ -11,6 +11,8 @@ export const UserProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [achievements, setAchievements] = useState([]);
+  const [achievementsLoading, setAchievementsLoading] = useState(false);
 
   // Check for existing user from localStorage on mount
   useEffect(() => {
@@ -27,6 +29,9 @@ export const UserProvider = ({ children }) => {
             
             // Update user's active status
             updateUserActivity(userData);
+            
+            // Load user achievements
+            loadUserAchievements(userData.udid);
           } else {
             // If user not found or other error, clear localStorage
             localStorage.removeItem('userUdid');
@@ -42,6 +47,69 @@ export const UserProvider = ({ children }) => {
     
     checkExistingUser();
   }, []);
+
+  // Function to load user achievements from the server
+  const loadUserAchievements = async (udid) => {
+    if (!udid) return;
+    
+    try {
+      setAchievementsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/user/${udid}/achievements`);
+      
+      if (response.ok) {
+        const achievementsData = await response.json();
+        setAchievements(achievementsData);
+      } else {
+        console.error('Failed to load achievements');
+      }
+    } catch (err) {
+      console.error('Error loading achievements:', err);
+    } finally {
+      setAchievementsLoading(false);
+    }
+  };
+
+  // Function to save a user achievement to the server
+  const saveAchievement = async (achievementId) => {
+    if (!user || !user.udid) return null;
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${user.udid}/achievements`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ achievement_id: achievementId }),
+      });
+      
+      if (response.ok) {
+        const savedAchievement = await response.json();
+        
+        // Update local achievements state
+        setAchievements(prevAchievements => {
+          // Check if achievement already exists in state
+          const exists = prevAchievements.some(a => a.achievement_id === achievementId);
+          if (exists) return prevAchievements;
+          
+          // Add new achievement to state
+          return [...prevAchievements, savedAchievement];
+        });
+        
+        return savedAchievement;
+      } else {
+        console.error('Failed to save achievement');
+        return null;
+      }
+    } catch (err) {
+      console.error('Error saving achievement:', err);
+      return null;
+    }
+  };
+
+  // Check if a specific achievement is unlocked
+  const isAchievementUnlocked = (achievementId) => {
+    return achievements.some(a => a.achievement_id === achievementId);
+  };
 
   // Fetch online users every 30 seconds
   useEffect(() => {
@@ -138,6 +206,9 @@ export const UserProvider = ({ children }) => {
       // Update user's active status
       updateUserActivity(responseData);
       
+      // Load user achievements
+      loadUserAchievements(responseData.udid);
+      
       return responseData;
     } catch (err) {
       console.error('Error registering user:', err);
@@ -151,6 +222,7 @@ export const UserProvider = ({ children }) => {
   const logoutUser = () => {
     localStorage.removeItem('userUdid');
     setUser(null);
+    setAchievements([]);
   };
 
   // Create the context value
@@ -161,6 +233,11 @@ export const UserProvider = ({ children }) => {
     error,
     registerUser,
     logoutUser,
+    achievements,
+    achievementsLoading,
+    saveAchievement,
+    isAchievementUnlocked,
+    loadUserAchievements
   };
 
   return (

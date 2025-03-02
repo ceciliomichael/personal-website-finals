@@ -116,38 +116,50 @@
   animation: fadeIn 0.3s ease;
 }
 
-.my-message {
-  align-self: flex-end;
-  background-color: rgba(106, 17, 203, 0.2);
-  border: 1px solid rgba(106, 17, 203, 0.3);
-}
-
-.other-message {
-  align-self: flex-start;
-  background-color: rgba(25, 25, 40, 0.8);
-  border: 1px solid rgba(80, 80, 120, 0.3);
-}
-
 .message-header {
   margin-bottom: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
 }
 
 .message-user {
   color: #fd7e14;
   font-weight: bold;
+  font-size: 0.95rem;
 }
 
 .message-time {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
 }
 
 .message-content {
   line-height: 1.4;
   word-break: break-word;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  padding-top: 2px;
+}
+
+.my-message {
+  align-self: flex-end;
+  background-color: rgba(106, 17, 203, 0.3);
+  border: 1px solid rgba(106, 17, 203, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.other-message {
+  align-self: flex-start;
+  background-color: rgba(25, 25, 40, 0.9);
+  border: 1px solid rgba(80, 80, 120, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .message-form {

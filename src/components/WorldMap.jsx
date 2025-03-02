@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import './WorldMap.css';
 
 const WorldMap = ({ sections, onSectionClick, activeSection }) => {
   const [stars, setStars] = useState([]);
+  const [shootingStars, setShootingStars] = useState([]);
+  const mapRef = useRef(null);
   
   // Log sections for debugging
   useEffect(() => {
@@ -14,7 +16,7 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
   useEffect(() => {
     const generateStars = () => {
       const newStars = [];
-      const starCount = 150;
+      const starCount = 180;
       
       for (let i = 0; i < starCount; i++) {
         newStars.push({
@@ -31,6 +33,31 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
     
     generateStars();
   }, []);
+  
+  // Generate occasional shooting stars
+  useEffect(() => {
+    const shootingStarInterval = setInterval(() => {
+      if (Math.random() > 0.7) { // 30% chance of shooting star
+        const newShootingStar = {
+          id: Date.now(),
+          left: `${Math.random() * 50}%`,
+          top: `${Math.random() * 40}%`,
+          angle: Math.random() * 45,
+          animationDelay: `${Math.random() * 0.5}s`,
+          opacity: 0
+        };
+        
+        setShootingStars(prev => [...prev, newShootingStar]);
+        
+        // Remove shooting star after animation
+        setTimeout(() => {
+          setShootingStars(prev => prev.filter(star => star.id !== newShootingStar.id));
+        }, 4000);
+      }
+    }, 3000);
+    
+    return () => clearInterval(shootingStarInterval);
+  }, []);
 
   // Add fallback sections if none are provided
   const displaySections = sections && sections.length > 0 ? sections : [
@@ -42,30 +69,37 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
       position: { x: 30, y: 30 }
     },
     {
-      id: 'experience',
-      title: 'Experience',
-      icon: '💼',
+      id: 'ai-expertise',
+      title: 'AI Expertise',
+      icon: '🤖',
       color: '#2575fc',
       position: { x: 70, y: 30 }
     },
     {
-      id: 'education',
-      title: 'Education',
-      icon: '🎓',
-      color: '#ff7e5f',
-      position: { x: 30, y: 70 }
+      id: 'technical-skills',
+      title: 'Technical Skills',
+      icon: '💻',
+      color: '#17a2b8',
+      position: { x: 45, y: 60 }
     },
     {
-      id: 'skills',
-      title: 'Skills',
-      icon: '🛠️',
-      color: '#17a2b8',
-      position: { x: 70, y: 70 }
+      id: 'development',
+      title: 'Development',
+      icon: '🚀',
+      color: '#ff7e5f',
+      position: { x: 25, y: 75 }
+    },
+    {
+      id: 'projects',
+      title: 'Projects',
+      icon: '🔮',
+      color: '#9147ff',
+      position: { x: 75, y: 70 }
     }
   ];
 
   return (
-    <div className="world-map">
+    <div className="world-map" ref={mapRef}>
       {/* Debugging output */}
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1000, color: 'white', fontSize: '12px', backgroundColor: 'rgba(0,0,0,0.5)', padding: '5px', display: 'none' }}>
         Sections: {displaySections.length}
@@ -83,6 +117,20 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
               width: star.size,
               height: star.size,
               animationDelay: star.animationDelay
+            }}
+          />
+        ))}
+        
+        {/* Shooting stars */}
+        {shootingStars.map((shootingStar) => (
+          <div
+            key={shootingStar.id}
+            className="shooting-star"
+            style={{
+              left: shootingStar.left,
+              top: shootingStar.top,
+              transform: `rotate(${shootingStar.angle}deg)`,
+              animationDelay: shootingStar.animationDelay
             }}
           />
         ))}
@@ -141,9 +189,9 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
         </defs>
       </svg>
       
-      {/* Section nodes */}
+      {/* Section nodes - simplified for better positioning */}
       {displaySections.map((section) => (
-        <motion.div
+        <div
           id={`section-${section.id}`}
           key={section.id}
           className={`map-node ${activeSection && activeSection.id === section.id ? 'active' : ''}`}
@@ -152,17 +200,13 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
             top: `${section.position.y}%`,
             backgroundColor: section.color
           }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: displaySections.indexOf(section) * 0.1 }}
           onClick={() => onSectionClick(section)}
-          whileHover={{ scale: 1.2, boxShadow: `0 0 20px ${section.color}` }}
         >
-          <span className="node-icon">{section.icon}</span>
+          <div className="node-icon">{section.icon}</div>
           <div className="node-tooltip">
             <span>{section.title}</span>
           </div>
-        </motion.div>
+        </div>
       ))}
       
       {/* Map decorations */}

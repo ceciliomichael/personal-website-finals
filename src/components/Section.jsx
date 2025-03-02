@@ -17,7 +17,7 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
         return (
           <div className="about-content">
             <div className="about-image">
-              <img src={content.image} alt="Profile" />
+              <img src={content.image} alt="Michael Cecilio" />
             </div>
             <div className="about-text">
               <p className="section-description">{content.description}</p>
@@ -30,7 +30,7 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
           </div>
         );
         
-      case 'experience':
+      case 'ai-expertise':
         return (
           <div className="timeline-content">
             <p className="section-description">{content.description}</p>
@@ -58,7 +58,7 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
           </div>
         );
         
-      case 'education':
+      case 'development':
         return (
           <div className="timeline-content">
             <p className="section-description">{content.description}</p>
@@ -86,7 +86,7 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
           </div>
         );
         
-      case 'skills':
+      case 'technical-skills':
         return (
           <div className="skills-content">
             <p className="section-description">{content.description}</p>
@@ -99,19 +99,28 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
                 >
-                  <h3>{category.category}</h3>
+                  <h3>{category.name}</h3>
                   <div className="skills-list">
-                    {category.skills.map((skill, skillIndex) => (
-                      <div 
-                        className="skill-item" 
-                        key={skillIndex}
+                    {category.skills.map((skill, i) => (
+                      <motion.div 
+                        className="skill-item"
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: (index * 0.1) + (i * 0.05) }}
                         style={{ 
-                          backgroundColor: `${section.color}${skillIndex % 2 === 0 ? '30' : '20'}`,
-                          borderColor: section.color
+                          borderColor: section.color,
+                          background: `linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))` 
                         }}
                       >
-                        {skill}
-                      </div>
+                        <span>{skill.name}</span>
+                        <div className="skill-level" 
+                          style={{ 
+                            width: `${Math.min(100, skill.level)}%`,
+                            background: `linear-gradient(90deg, ${section.color}, rgba(255,255,255,0.3))`
+                          }}
+                        ></div>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
@@ -129,26 +138,33 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
                 <motion.div 
                   className="project-card"
                   key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  style={{ borderColor: section.color }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  style={{ 
+                    borderColor: section.color,
+                    background: `linear-gradient(135deg, rgba(25,25,35,0.8), rgba(30,30,50,0.8))`,
+                    boxShadow: `0 5px 15px rgba(0,0,0,0.2), 0 0 10px rgba(${parseInt(section.color.slice(1, 3), 16)}, ${parseInt(section.color.slice(3, 5), 16)}, ${parseInt(section.color.slice(5, 7), 16)}, 0.1)`
+                  }}
                 >
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
                   <div className="project-technologies">
-                    {project.technologies.map((tech, techIndex) => (
+                    {project.technologies.map((tech, i) => (
                       <span 
                         className="technology-tag" 
-                        key={techIndex}
-                        style={{ backgroundColor: section.color }}
+                        key={i}
+                        style={{ 
+                          backgroundColor: `rgba(${parseInt(section.color.slice(1, 3), 16)}, ${parseInt(section.color.slice(3, 5), 16)}, ${parseInt(section.color.slice(5, 7), 16)}, 0.2)`,
+                          borderColor: section.color
+                        }}
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
-                  <a href={project.link} className="project-link" style={{ color: section.color }}>
-                    View Project
+                  <a href={project.link} className="project-link" target="_blank" rel="noopener noreferrer" style={{ color: section.color }}>
+                    View Project <span>→</span>
                   </a>
                 </motion.div>
               ))}
@@ -254,7 +270,11 @@ const Section = ({ section, onClose, onAIChat, onFeedbackSubmit, userName = "Vis
         );
         
       default:
-        return <p className="section-description">{content.description}</p>;
+        return (
+          <div className="default-content">
+            <p className="section-description">{content?.description || "Content coming soon!"}</p>
+          </div>
+        );
     }
   };
 

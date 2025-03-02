@@ -38,7 +38,8 @@ def add_cors_headers(response):
 in_memory_db = {
     "users": [],
     "active_users": [],
-    "chat_messages": []
+    "chat_messages": [],
+    "user_achievements": []  # Add user_achievements to in-memory DB
 }
 
 # MongoDB connection settings
@@ -65,12 +66,16 @@ try:
     users_collection = db["users"]
     active_users_collection = db["active_users"]
     chat_messages_collection = db["chat_messages"]
+    user_achievements_collection = db["user_achievements"]  # Add user_achievements collection
     
     # Create TTL index for active users (automatically remove after 5 minutes of inactivity)
     active_users_collection.create_index("last_active", expireAfterSeconds=300)
     
     # Create index for chat messages by timestamp for efficient sorting
     chat_messages_collection.create_index("timestamp")
+    
+    # Create index for user achievements by user_udid for efficient lookups
+    user_achievements_collection.create_index("user_udid")
     
     print(f"Successfully connected to MongoDB at {MONGO_URI}!")
 except Exception as e:
@@ -266,6 +271,117 @@ def get_user_by_udid(udid):
         return jsonify(user)
     except Exception as e:
         print(f"Error getting user: {e}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+# New endpoint to get user achievements
+@app.route('/api/user/<udid>/achievements', methods=['GET'])
+def get_user_achievements(udid):
+    try:
+        if using_in_memory_db:
+            # Check if user exists
+            user = in_memory_find_one("users", {"udid": udid})
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+                
+            # Get user achievements
+            achievements = in_memory_find("user_achievements", {"user_udid": udid})
+            
+            # If no achievements found, return empty array
+            if not achievements:
+                return jsonify([])
+                
+            # Convert ObjectId to string for JSON serialization if needed
+            for achievement in achievements:
+                if not isinstance(achievement.get('_id'), str) and achievement.get('_id') is not None:
+                    achievement['_id'] = str(achievement['_id'])
+            
+            return jsonify(achievements)
+        else:
+            # Check if user exists
+            user = users_collection.find_one({"udid": udid})
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+                
+            # Get user achievements
+            achievements = list(user_achievements_collection.find({"user_udid": udid}))
+            
+            # Convert ObjectId to string for JSON serialization
+            for achievement in achievements:
+                if not isinstance(achievement.get('_id'), str) and achievement.get('_id') is not None:
+                    achievement['_id'] = str(achievement['_id'])
+            
+            return jsonify(achievements)
+    except Exception as e:
+        print(f"Error getting user achievements: {e}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+# New endpoint to save user achievement
+@app.route('/api/user/<udid>/achievements', methods=['POST'])
+def save_user_achievement(udid):
+    try:
+        data = request.json
+        achievement_id = data.get('achievement_id')
+        
+        if not achievement_id:
+            return jsonify({"error": "Achievement ID is required"}), 400
+            
+        # Check if user exists
+        if using_in_memory_db:
+            user = in_memory_find_one("users", {"udid": udid})
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+                
+            # Check if achievement already exists
+            existing_achievement = in_memory_find_one(
+                "user_achievements", 
+                {"user_udid": udid, "achievement_id": achievement_id}
+            )
+            
+            if existing_achievement:
+                # Achievement already unlocked, just return it
+                if not isinstance(existing_achievement.get('_id'), str) and existing_achievement.get('_id') is not None:
+                    existing_achievement['_id'] = str(existing_achievement['_id'])
+                return jsonify(existing_achievement)
+                
+            # Create new achievement record
+            new_achievement = {
+                "user_udid": udid,
+                "achievement_id": achievement_id,
+                "unlocked_at": datetime.datetime.utcnow().isoformat()
+            }
+            
+            result = in_memory_insert_one("user_achievements", new_achievement)
+            new_achievement['_id'] = str(result.inserted_id)
+            
+            return jsonify(new_achievement), 201
+        else:
+            user = users_collection.find_one({"udid": udid})
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+                
+            # Check if achievement already exists
+            existing_achievement = user_achievements_collection.find_one(
+                {"user_udid": udid, "achievement_id": achievement_id}
+            )
+            
+            if existing_achievement:
+                # Achievement already unlocked, just return it
+                existing_achievement['_id'] = str(existing_achievement['_id'])
+                return jsonify(existing_achievement)
+                
+            # Create new achievement record
+            new_achievement = {
+                "user_udid": udid,
+                "achievement_id": achievement_id,
+                "unlocked_at": datetime.datetime.utcnow()
+            }
+            
+            result = user_achievements_collection.insert_one(new_achievement)
+            new_achievement['_id'] = str(result.inserted_id)
+            
+            return jsonify(new_achievement), 201
+    except Exception as e:
+        print(f"Error saving user achievement: {e}")
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 @app.route('/api/users/active', methods=['POST'])
@@ -501,7 +617,8 @@ def test_database():
             collections = {
                 "users": len(in_memory_db["users"]),
                 "active_users": len(in_memory_db["active_users"]),
-                "chat_messages": len(in_memory_db["chat_messages"])
+                "chat_messages": len(in_memory_db["chat_messages"]),
+                "user_achievements": len(in_memory_db["user_achievements"])
             }
             return jsonify({
                 "status": "success",
@@ -515,7 +632,8 @@ def test_database():
             collections = {
                 "users": users_collection.count_documents({}),
                 "active_users": active_users_collection.count_documents({}),
-                "chat_messages": chat_messages_collection.count_documents({})
+                "chat_messages": chat_messages_collection.count_documents({}),
+                "user_achievements": user_achievements_collection.count_documents({})
             }
             return jsonify({
                 "status": "success",

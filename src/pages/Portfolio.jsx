@@ -10,6 +10,15 @@ import AchievementNotification from '../components/AchievementNotification';
 import './Portfolio.css';
 import { useUser } from '../context/UserContext';
 
+import profile from '../assets/images/profile/me.jpg';
+import gallery1 from '../assets/images/gallery/image1.png';
+import gallery2 from '../assets/images/gallery/image2.jpg';
+import gallery3 from '../assets/images/gallery/image3.jpg';
+import gallery4 from '../assets/images/gallery/image4.jpg';
+import gallery5 from '../assets/images/gallery/image5.png';
+import gallery6 from '../assets/images/gallery/image6.png';
+
+
 // Portfolio sections data
 const sections = [
   {
@@ -20,14 +29,15 @@ const sections = [
     position: { x: 20, y: 30 },
     content: {
       title: 'About Michael Cecilio',
-      description: `Michael Cecilio is an AI Developer & AI Engineer specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.`,
+      description: `Michael Cecilio is an Aspiring AI Developer & AI Engineer specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.`,
       details: [
-        'AI Developer & Tech Enthusiast',
-        'Based in the digital realm, available worldwide',
+        'AI Developer, Prompt Engineer & Tech Enthusiast',
         'GitHub: ceciliomichael | LinkedIn: ceciliomichael',
-        'Passionate about exploring and developing artificial intelligence applications'
+        'Specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.',
+        'Aspiring AI Engineer with expertise in maximizing AI potential through advanced prompting techniques',
+        'Full-stack developer leveraging AI for efficient development workflows'
       ],
-      image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8dGVjaHx8fHx8fDE2NDAyNjEyMDA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=600'
+      image: profile
     }
   },
   {
@@ -38,25 +48,49 @@ const sections = [
     position: { x: 70, y: 20 },
     content: {
       title: 'AI Development Experience',
-      description: 'Specializing in AI integration and development, with expertise in creating intelligent systems and implementing advanced AI models.',
+      description: 'Specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.',
       timeline: [
         {
           year: 'Current Focus',
-          role: 'AI Development & Integration',
+          role: 'Development of web-based chatbot applications',
           company: 'Various Projects',
-          description: 'Development of web-based chatbot applications with advanced AI integration. Implementation of pre-built AI models for enhanced conversational abilities.'
+          description: 'Development of web-based chatbot applications with advanced AI integration'
+        },
+        {
+          year: 'AI Prompting',
+          role: 'Advanced Prompt Engineering',
+          company: 'Various Projects',
+          description: 'Expertise in crafting effective prompts to maximize AI potential and extract optimal responses from large language models'
+        },
+        {
+          year: 'AI Optimization',
+          role: 'AI Performance Enhancement',
+          company: 'Various Projects',
+          description: 'Specialized techniques to optimize AI systems for better performance, accuracy, and user experience'
+        },
+        {
+          year: 'Full Stack AI',
+          role: 'AI-Assisted Development',
+          company: 'Various Projects',
+          description: 'Using AI to accelerate and enhance the full stack development process across front-end and back-end systems'
         },
         {
           year: 'System Development',
-          role: 'AI Communication Systems',
+          role: 'Implementation of pre-built AI models',
           company: 'Research Projects',
-          description: 'Creation of systems enabling AI agents to communicate with each other. Development of deep thinking AI chat systems with evolutionary capabilities.'
+          description: 'Implementation of pre-built AI models for enhanced conversational abilities'
         },
         {
-          year: 'Mobile Integration',
-          role: 'Mobile AI Applications',
-          company: 'App Development',
-          description: 'Developed a mobile application featuring an interactive AI chatbot. Implemented voice interaction capabilities for natural conversations.'
+          year: 'System Development',
+          role: 'Creation of AI communication systems',
+          company: 'Research Projects',
+          description: 'Creation of systems enabling AI agents to communicate with each other'
+        },
+        {
+          year: 'System Development',
+          role: 'Development of deep thinking AI',
+          company: 'Research Projects',
+          description: 'Development of deep thinking AI chat systems with evolutionary capabilities'
         }
       ]
     }
@@ -77,10 +111,27 @@ const sections = [
             { name: 'HTML5', level: 90 },
             { name: 'CSS3', level: 85 },
             { name: 'JavaScript (ES6+)', level: 92 },
-            { name: 'React.js', level: 88 },
-            { name: 'Vue.js', level: 80 },
-            { name: 'Angular', level: 75 },
-            { name: 'UI Libraries & Frameworks', level: 85 }
+            { name: 'Frontend Frameworks', level: 88 },
+            { name: 'UI Libraries', level: 85 },
+            { name: 'Responsive Web Design', level: 90 }
+          ]
+        },
+        {
+          name: 'Client-Side Details',
+          skills: [
+            { name: 'HTML5: Semantic markup, accessibility', level: 90 },
+            { name: 'CSS3: Flexbox, Grid, animations', level: 85 },
+            { name: 'JavaScript: ES6+, DOM manipulation', level: 92 },
+            { name: 'Frontend Frameworks: React.js, Vue.js, Angular', level: 88 },
+            { name: 'UI Libraries: Bootstrap, Material-UI, Tailwind CSS', level: 85 }
+          ]
+        },
+        {
+          name: 'Framework Expertise',
+          skills: [
+            { name: 'React', level: 90 },
+            { name: 'Vue', level: 85 },
+            { name: 'Flutter', level: 82 }
           ]
         },
         {
@@ -89,28 +140,9 @@ const sections = [
             { name: 'AI Model Integration', level: 95 },
             { name: 'Natural Language Processing', level: 90 },
             { name: 'Chatbot Development', level: 92 },
-            { name: 'Machine Learning', level: 85 },
-            { name: 'Computer Vision', level: 80 }
-          ]
-        },
-        {
-          name: 'Backend Development',
-          skills: [
-            { name: 'Node.js', level: 88 },
-            { name: 'Express', level: 85 },
-            { name: 'Django', level: 80 },
-            { name: 'Flask', level: 75 },
-            { name: 'MongoDB', level: 82 },
-            { name: 'Supabase', level: 78 }
-          ]
-        },
-        {
-          name: 'Mobile Development',
-          skills: [
-            { name: 'Flutter', level: 85 },
-            { name: 'React Native', level: 80 },
-            { name: 'Kotlin (Android)', level: 75 },
-            { name: 'Mobile UI/UX', level: 82 }
+            { name: 'Prompt Engineering', level: 95 },
+            { name: 'AI Optimization Techniques', level: 88 },
+            { name: 'AI-Assisted Development', level: 90 }
           ]
         }
       ]
@@ -133,16 +165,34 @@ const sections = [
           description: 'Frontend: React.js, Vue.js. Backend: Node.js, Express, Django, Flask. Database: MongoDB & Supabase. Tools: Git, Docker, VMware & Virtualbox.'
         },
         {
-          year: 'Mobile Development',
-          degree: 'Cross-Platform & Native',
-          institution: 'App Ecosystems',
-          description: 'Native Android development with Kotlin. Cross-platform development with Flutter and React Native. Mobile UI/UX design and implementation.'
+          year: 'Responsive Design',
+          degree: 'Mobile-First Web Development',
+          institution: 'Various Projects',
+          description: 'Creating responsive web applications optimized for mobile devices. Implementing fluid layouts and adaptive designs that work across different screen sizes.'
+        },
+        {
+          year: 'Flutter Development',
+          degree: 'Mobile App Development',
+          institution: 'App Projects',
+          description: 'Building mobile applications with Flutter. Focusing on creating engaging UI and integrating AI functionalities into mobile experiences.'
         },
         {
           year: 'AI Development',
           degree: 'Artificial Intelligence',
           institution: 'Various Projects',
           description: 'Machine Learning model development and deployment. Natural Language Processing applications. Computer Vision projects. Integration of AI with web and mobile applications.'
+        },
+        {
+          year: 'AI & Chatbot Development',
+          degree: 'Specialized AI Systems',
+          institution: 'Various Projects',
+          description: 'Developed a mobile application featuring an interactive AI chatbot. Implemented voice interaction capabilities for natural conversations. Created web-based chatbot applications using HTML and modern frameworks. Integrated pre-built AI models for enhanced conversational abilities. Experience with natural language processing APIs and libraries.'
+        },
+        {
+          year: 'AI Projects Highlight',
+          degree: 'Advanced AI Systems',
+          institution: 'Research Projects',
+          description: 'Developed an AI system capable of deep thinking and careful thought processing. Created a platform for multiple AI agents to interact and communicate. Implemented evolutionary learning capabilities in AI chat systems. Integrated pre-built AI models with custom learning algorithms.'
         }
       ]
     }
@@ -159,37 +209,31 @@ const sections = [
       projects: [
         {
           title: 'Deepthinking AI Chat',
-          description: 'Advanced AI system with deep processing and evolutionary learning capabilities.',
+          description: 'Advanced AI system with deep processing and evolutionary learning capabilities',
           technologies: ['AI', 'NLP', 'Machine Learning', 'Web Development'],
           link: '#'
         },
         {
           title: 'AI-to-AI Communication Platform',
-          description: 'Platform enabling multiple AI agents to interact and communicate.',
+          description: 'Platform enabling multiple AI agents to interact and communicate',
           technologies: ['AI', 'NLP', 'Multi-agent Systems', 'Web Development'],
           link: '#'
         },
         {
-          title: 'Full Stack E-commerce Platform',
-          description: 'Developed using MERN stack with real-time features.',
-          technologies: ['MongoDB', 'Express', 'React', 'Node.js', 'Real-time'],
-          link: '#'
-        },
-        {
-          title: 'Mobile Fitness Tracking App',
-          description: 'Built with Flutter, incorporating ML for pose estimation.',
-          technologies: ['Flutter', 'ML', 'Mobile Development', 'UI/UX'],
+          title: 'AIFriend',
+          description: 'Mobile application where AI can be your personal friend and companion, created with Flutter',
+          technologies: ['Flutter', 'AI', 'Mobile Development', 'UI/UX'],
           link: '#'
         },
         {
           title: 'AI-Powered Chat Application',
-          description: 'Implemented using prebuilt open-source models and advanced prompting techniques.',
+          description: 'Implemented using prebuilt open-source models and advanced prompting techniques',
           technologies: ['AI', 'JavaScript', 'NLP', 'API Integration'],
           link: '#'
         },
         {
           title: 'Web Chatbot Interface',
-          description: 'HTML-based chatbot with pre-built AI integration.',
+          description: 'HTML-based chatbot with pre-built AI integration',
           technologies: ['HTML', 'CSS', 'JavaScript', 'AI Integration'],
           link: '#'
         }
@@ -207,24 +251,24 @@ const sections = [
       description: 'When I\'m not immersed in code, you can find me enjoying these activities.',
       hobbies: [
         {
-          name: 'Gaming',
-          description: 'I enjoy both video games and board games, particularly strategy and RPG genres.',
-          icon: '🎮'
+          name: 'AI Experimentation',
+          description: 'Passionate about exploring and learning about artificial intelligence and its applications.',
+          icon: '🤖'
         },
         {
-          name: 'Reading',
-          description: 'Science fiction, fantasy, and technical books are my go-to genres for expanding my imagination and knowledge.',
+          name: 'Reading Tech Blogs',
+          description: 'Staying updated with the latest in technology and AI development.',
           icon: '📚'
         },
         {
-          name: 'Hiking',
-          description: 'Exploring nature trails and mountains helps me disconnect and recharge.',
-          icon: '🥾'
+          name: 'Singing',
+          description: 'Enjoy singing and performing vocal music in my free time.',
+          icon: '🎤'
         },
         {
-          name: 'Photography',
-          description: 'Capturing moments and scenes, especially during my travels and outdoor adventures.',
-          icon: '📷'
+          name: 'Broadway & Musicals',
+          description: 'Love listening to and experiencing Broadway shows and musical theater.',
+          icon: '🎭'
         }
       ]
     }
@@ -240,24 +284,39 @@ const sections = [
       description: 'I believe in continuous growth and setting ambitious goals for my personal and professional development.',
       goals: [
         {
-          title: 'Master AI and Machine Learning',
-          description: 'Develop expertise in AI technologies to create more intelligent and adaptive web applications.',
-          timeline: 'Next 2 years'
-        },
-        {
-          title: 'Contribute to Open Source',
-          description: 'Become an active contributor to major open-source projects in the web development ecosystem.',
+          title: 'Further develop expertise in Large Language Models',
+          description: 'Expand knowledge in neural network architectures and transformers.',
           timeline: 'Ongoing'
         },
         {
-          title: 'Launch a SaaS Product',
-          description: 'Develop and launch my own Software as a Service product that solves a meaningful problem.',
-          timeline: 'Next 3 years'
+          title: 'Advance as an AI Engineer',
+          description: 'Continue developing skills in AI engineering to build more sophisticated AI systems.',
+          timeline: 'Current focus'
         },
         {
-          title: 'Mentor New Developers',
-          description: 'Help guide the next generation of developers through mentorship and educational content.',
+          title: 'Create practical AI applications',
+          description: 'Develop AI solutions that solve real problems and provide value.',
           timeline: 'Current focus'
+        },
+        {
+          title: 'Master prompt engineering techniques',
+          description: 'Refine abilities to maximize AI potential through advanced prompting methodologies.',
+          timeline: 'Ongoing'
+        },
+        {
+          title: 'AI model optimization and deployment',
+          description: 'Learn and implement efficient ways to optimize and deploy AI models.',
+          timeline: 'Next 2 years'
+        },
+        {
+          title: 'Full-stack development with AI integration',
+          description: 'Combine full-stack development expertise with advanced AI integration capabilities.',
+          timeline: 'Current focus'
+        },
+        {
+          title: 'Balance academic studies with AI project development',
+          description: 'Continue academic learning while applying knowledge to practical AI projects.',
+          timeline: 'Ongoing'
         }
       ]
     }
@@ -273,28 +332,28 @@ const sections = [
       description: 'A collection of images from my work, travels, and creative endeavors.',
       images: [
         {
-          url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
-          caption: 'Coding session on a productive day'
+          url: gallery1,
+          caption: 'Minecraft with friends'
         },
         {
-          url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97',
-          caption: 'Late night debugging'
+          url: gallery2,
+          caption: 'Chanel the cat'
         },
         {
-          url: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d',
-          caption: 'Team collaboration meeting'
+          url: gallery3,
+          caption: 'Wednesday the cat'
         },
         {
-          url: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea',
-          caption: 'Workspace setup'
+          url: gallery4,
+          caption: 'My wallpaper blackhole'
         },
         {
-          url: 'https://images.unsplash.com/photo-1503252947848-7338d3f92f31',
-          caption: 'Hiking trip to recharge'
+          url: gallery5,
+          caption: 'HahTdog'
         },
         {
-          url: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd',
-          caption: 'Attending a tech conference'
+          url: gallery6,
+          caption: 'In the battle of PUBG with friend'
         }
       ]
     }
@@ -418,18 +477,20 @@ const Portfolio = ({ userName }) => {
   useEffect(() => {
     unlockAchievement('first_visit');
     
-    // Set up timer for the "Curious Mind" achievement
-    const timerInterval = setInterval(() => {
-      const timeSpent = Date.now() - startTime;
-      const curiousMindAchievement = localAchievements.find(a => a.id === 'curious_mind');
+    // Only set up timer if curious_mind achievement is not already unlocked
+    const curiousMindAchievement = localAchievements.find(a => a.id === 'curious_mind');
+    if (!curiousMindAchievement?.unlocked) {
+      const timerInterval = setInterval(() => {
+        const timeSpent = Date.now() - startTime;
+        if (timeSpent >= curiousMindAchievement.timeRequired) {
+          unlockAchievement('curious_mind');
+          clearInterval(timerInterval); // Clear interval once achievement is unlocked
+        }
+      }, 30000); // Check every 30 seconds
       
-      if (curiousMindAchievement && !curiousMindAchievement.unlocked && timeSpent >= curiousMindAchievement.timeRequired) {
-        unlockAchievement('curious_mind');
-      }
-    }, 30000); // Check every 30 seconds
-    
-    return () => clearInterval(timerInterval);
-  }, []);
+      return () => clearInterval(timerInterval);
+    }
+  }, [localAchievements]);
 
   // Track visited sections and check for achievements
   useEffect(() => {
@@ -506,21 +567,30 @@ const Portfolio = ({ userName }) => {
     }
   };
 
-  const handleAIChat = async (message) => {
+  const handleAIChat = async (message, systemPrompt = '', onStream = null) => {
     // Unlock AI Friend achievement when user interacts with AI
     unlockAchievement('ai_friend');
     
-    // System prompt to guide the AI for the quest/game
-    const systemPrompt = `
-      You are an interactive AI guide in a portfolio adventure game. 
-      The user's name is ${userName}. 
-      Create an engaging, short response that progresses an adventure story based on the user's input.
-      Offer 2-3 clear choices for how they can proceed next.
-      Keep responses under 150 words and maintain an adventurous, fantasy tone.
-      Incorporate references to technology, coding, and web development in creative ways.
-    `;
+    // If a custom system prompt is provided, use it (from the AIChat component)
+    // Otherwise, use the default system prompt
+    if (!systemPrompt) {
+      systemPrompt = `
+        You are an interactive AI guide in a portfolio adventure game. 
+        The user's name is ${userName}. 
+        Create an engaging, short response that progresses an adventure story based on the user's input.
+        
+        IMPORTANT: Always provide exactly 3 numbered choices for the user to select from.
+        Format these choices as:
+        1. First choice description
+        2. Second choice description
+        3. Third choice description
+        
+        Keep responses under 150 words and maintain an adventurous, fantasy tone.
+        Incorporate references to technology, coding, and web development in creative ways.
+      `;
+    }
     
-    return await sendMessage(message, systemPrompt);
+    return await sendMessage(message, systemPrompt, onStream);
   };
 
   const handleFeedbackSubmit = (feedback) => {
@@ -530,8 +600,6 @@ const Portfolio = ({ userName }) => {
     // Unlock the feedback achievement
     unlockAchievement('feedback_giver');
     
-    // Show a thank you message or notification
-    alert('Thank you for your feedback!');
   };
 
   // Close dropdown when clicking outside

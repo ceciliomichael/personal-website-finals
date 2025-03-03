@@ -5,7 +5,24 @@ import './WorldMap.css';
 const WorldMap = ({ sections, onSectionClick, activeSection }) => {
   const [stars, setStars] = useState([]);
   const [shootingStars, setShootingStars] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
   const mapRef = useRef(null);
+  
+  // Check if the device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Log sections for debugging
   useEffect(() => {
@@ -98,8 +115,15 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
     }
   ];
 
+  // For mobile: Calculate vertical positions for sections in a straight line
+  const getMobilePosition = (index, total) => {
+    const spacing = 80 / total; // Use 80% of the height, leaving 10% padding at top and bottom
+    const yPosition = 10 + (index * spacing); // Start at 10% from the top
+    return { x: 50, y: yPosition }; // Center horizontally, distribute vertically
+  };
+
   return (
-    <div className="world-map" ref={mapRef}>
+    <div className={`world-map ${isMobile ? 'mobile-layout' : ''}`} ref={mapRef}>
       {/* Debugging output */}
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1000, color: 'white', fontSize: '12px', backgroundColor: 'rgba(0,0,0,0.5)', padding: '5px', display: 'none' }}>
         Sections: {displaySections.length}
@@ -138,39 +162,65 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
       
       {/* Map paths connecting sections */}
       <svg className="map-paths" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {displaySections.map((section, index) => {
-          // Connect each section to a few nearby sections to create a network
-          const connections = displaySections
-            .filter((_, i) => i !== index)
-            .sort((a, b) => {
-              const distA = Math.sqrt(
-                Math.pow(section.position.x - a.position.x, 2) + 
-                Math.pow(section.position.y - a.position.y, 2)
+        {!isMobile ? (
+          // Constellation layout for desktop
+          displaySections.map((section, index) => {
+            // Connect each section to a few nearby sections to create a network
+            const connections = displaySections
+              .filter((_, i) => i !== index)
+              .sort((a, b) => {
+                const distA = Math.sqrt(
+                  Math.pow(section.position.x - a.position.x, 2) + 
+                  Math.pow(section.position.y - a.position.y, 2)
+                );
+                const distB = Math.sqrt(
+                  Math.pow(section.position.x - b.position.x, 2) + 
+                  Math.pow(section.position.y - b.position.y, 2)
+                );
+                return distA - distB;
+              })
+              .slice(0, 2); // Connect to the 2 closest sections
+            
+            return connections.map((connection, i) => (
+              <motion.path
+                key={`${section.id}-${connection.id}-${i}`}
+                d={`M${section.position.x} ${section.position.y} L${connection.position.x} ${connection.position.y}`}
+                stroke={`url(#gradient-${section.id}-${connection.id})`}
+                strokeWidth="0.5"
+                fill="none"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.6 }}
+                transition={{ duration: 1.5, delay: index * 0.1 }}
+              />
+            ));
+          }).flat()
+        ) : (
+          // Straight line layout for mobile
+          displaySections.map((section, index, array) => {
+            if (index < array.length - 1) {
+              const currentPos = getMobilePosition(index, array.length);
+              const nextPos = getMobilePosition(index + 1, array.length);
+              
+              return (
+                <motion.path
+                  key={`mobile-path-${index}`}
+                  d={`M${currentPos.x} ${currentPos.y} L${currentPos.x} ${nextPos.y}`}
+                  stroke={`url(#gradient-mobile-${index})`}
+                  strokeWidth="1"
+                  fill="none"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 0.8 }}
+                  transition={{ duration: 1, delay: index * 0.2 }}
+                />
               );
-              const distB = Math.sqrt(
-                Math.pow(section.position.x - b.position.x, 2) + 
-                Math.pow(section.position.y - b.position.y, 2)
-              );
-              return distA - distB;
-            })
-            .slice(0, 2); // Connect to the 2 closest sections
-          
-          return connections.map((connection, i) => (
-            <motion.path
-              key={`${section.id}-${connection.id}-${i}`}
-              d={`M${section.position.x} ${section.position.y} L${connection.position.x} ${connection.position.y}`}
-              stroke={`url(#gradient-${section.id}-${connection.id})`}
-              strokeWidth="0.5"
-              fill="none"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.6 }}
-              transition={{ duration: 1.5, delay: index * 0.1 }}
-            />
-          ));
-        }).flat()}
+            }
+            return null;
+          })
+        )}
         
         {/* Define gradients for paths */}
         <defs>
+          {/* Desktop gradients */}
           {displaySections.map(section => 
             displaySections.map(connection => (
               <linearGradient
@@ -186,28 +236,55 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
               </linearGradient>
             ))
           ).flat()}
+          
+          {/* Mobile gradients */}
+          {displaySections.map((section, index, array) => {
+            if (index < array.length - 1) {
+              return (
+                <linearGradient
+                  key={`gradient-mobile-${index}`}
+                  id={`gradient-mobile-${index}`}
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor={section.color} />
+                  <stop offset="100%" stopColor={array[index + 1].color} />
+                </linearGradient>
+              );
+            }
+            return null;
+          })}
         </defs>
       </svg>
       
-      {/* Section nodes - simplified for better positioning */}
-      {displaySections.map((section) => (
-        <div
-          id={`section-${section.id}`}
-          key={section.id}
-          className={`map-node ${activeSection && activeSection.id === section.id ? 'active' : ''}`}
-          style={{
-            left: `${section.position.x}%`,
-            top: `${section.position.y}%`,
-            backgroundColor: section.color
-          }}
-          onClick={() => onSectionClick(section)}
-        >
-          <div className="node-icon">{section.icon}</div>
-          <div className="node-tooltip">
-            <span>{section.title}</span>
+      {/* Section nodes */}
+      {displaySections.map((section, index) => {
+        // Use mobile positions for mobile layout
+        const position = isMobile 
+          ? getMobilePosition(index, displaySections.length) 
+          : section.position;
+          
+        return (
+          <div
+            id={`section-${section.id}`}
+            key={section.id}
+            className={`map-node ${activeSection && activeSection.id === section.id ? 'active' : ''}`}
+            style={{
+              left: `${position.x}%`,
+              top: `${position.y}%`,
+              backgroundColor: section.color
+            }}
+            onClick={() => onSectionClick(section)}
+          >
+            <div className="node-icon">{section.icon}</div>
+            <div className="node-tooltip">
+              <span>{section.title}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       
       {/* Map decorations */}
       <div className="map-decorations">

@@ -2,8 +2,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 600px;
+  width: 100%;
   margin: 0 auto;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  border: none;
+  padding: 0;
 }
 
 .form-group {
@@ -13,138 +19,132 @@
 }
 
 .form-group label {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1rem;
   color: var(--text-color);
+  margin-bottom: 0.25rem;
 }
 
 .form-group input,
 .form-group textarea {
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
   border: 1px solid rgba(106, 17, 203, 0.3);
   background-color: rgba(25, 25, 40, 0.5);
   color: var(--text-color);
   font-size: 1rem;
   transition: all 0.3s ease;
+  width: 100%;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: rgba(106, 17, 203, 0.7);
-  box-shadow: 0 0 10px rgba(106, 17, 203, 0.3);
+  box-shadow: 0 0 16px rgba(106, 17, 203, 0.3);
+  transform: translateY(-2px);
 }
 
 .form-group input.error,
 .form-group textarea.error {
   border-color: var(--danger-color);
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.3);
 }
 
 .error-message {
   color: var(--danger-color);
   font-size: 0.85rem;
   margin-top: 0.25rem;
-}
-
-.star-rating {
-  display: flex;
-  gap: 0.5rem;
-  direction: rtl;
-}
-
-.star-label {
-  cursor: pointer;
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.star-label.active,
-.star-label.active ~ .star-label {
-  color: #ffc107;
-}
-
-.star-label input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.star {
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.star-label:hover .star,
-.star-label:hover ~ .star-label .star {
-  color: #ffc107;
+  font-weight: 500;
 }
 
 .submit-button {
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 0.9rem 1.8rem;
+  border-radius: 12px;
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  color: var(--text-color);
+  color: white;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
-  align-self: flex-end;
+  align-self: center;
   border: none;
+  width: 100%;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .submit-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #7c21e0 0%, #3a86ff 100%);
 }
 
 .feedback-success {
   text-align: center;
-  padding: 2rem;
-  background-color: rgba(25, 25, 40, 0.5);
-  border-radius: 10px;
+  padding: 3rem 2rem;
+  background-color: transparent;
+  border-radius: 16px;
   border: 1px solid rgba(40, 167, 69, 0.3);
-  max-width: 400px;
+  width: 100%;
   margin: 0 auto;
 }
 
 .success-icon {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  font-size: 2rem;
-  color: var(--text-color);
+  font-size: 2.5rem;
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .feedback-success h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   color: var(--success-color);
+  font-weight: 700;
 }
 
 .feedback-success p {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-color);
+  opacity: 0.9;
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
   .feedback-form {
     max-width: 100%;
+    padding: 0;
   }
   
   .submit-button {
     width: 100%;
     align-self: center;
+    padding: 0.9rem 1.5rem;
+  }
+  
+  .feedback-success {
+    padding: 2rem 1.5rem;
+  }
+  
+  .success-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
   }
 }
 
@@ -155,16 +155,22 @@
   
   .form-group input,
   .form-group textarea {
-    padding: 0.7rem 0.9rem;
+    padding: 0.8rem 1rem;
     font-size: 0.9rem;
-  }
-  
-  .star-label {
-    font-size: 1.8rem;
+    border-radius: 10px;
   }
   
   .submit-button {
     padding: 0.8rem 1.5rem;
     font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  
+  .feedback-success h3 {
+    font-size: 1.5rem;
+  }
+  
+  .feedback-success p {
+    font-size: 1rem;
   }
 } 

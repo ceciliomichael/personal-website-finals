@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext';
 import './Lobby.css';
 
 // API Base URL from environment or default
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://026vn2g1-5000.asse.devtunnels.ms//api';
+const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
 
 // Helper to format message timestamps
 const formatTimestamp = (isoString) => {

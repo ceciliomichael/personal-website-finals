@@ -9,7 +9,6 @@ const FeedbackForm = ({ onSubmit }) => {
     name: user?.name || '',
     email: '',
     message: '',
-    rating: 0,
     udid: user?.udid || ''
   });
   
@@ -17,8 +16,7 @@ const FeedbackForm = ({ onSubmit }) => {
   const [errors, setErrors] = useState({
     name: '',
     email: '',
-    message: '',
-    rating: ''
+    message: ''
   });
 
   const handleChange = (e) => {
@@ -65,12 +63,6 @@ const FeedbackForm = ({ onSubmit }) => {
       valid = false;
     }
     
-    // Validate rating
-    if (formData.rating === 0) {
-      newErrors.rating = 'Please select a rating';
-      valid = false;
-    }
-    
     setErrors(newErrors);
     return valid;
   };
@@ -81,7 +73,7 @@ const FeedbackForm = ({ onSubmit }) => {
     if (validateForm()) {
       try {
         // Send feedback to the backend API
-        const response = await fetch('https://026vn2g1-5000.asse.devtunnels.ms/api/feedback', {
+        const response = await fetch(import.meta.env.VITE_API_URL + '/api/feedback', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -98,51 +90,23 @@ const FeedbackForm = ({ onSubmit }) => {
           onSubmit(formData);
         }
         
-        // Show success message
+        // Show success message temporarily
         setSubmitted(true);
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+          setFormData({
+            name: user?.name || '',
+            email: '',
+            message: '',
+            udid: user?.udid || ''
+          });
+        }, 3000);
       } catch (error) {
         console.error('Error submitting feedback:', error);
       }
     }
-  };
-
-  const handleRatingChange = (rating) => {
-    setFormData({
-      ...formData,
-      rating
-    });
-    
-    // Clear rating error
-    if (errors.rating) {
-      setErrors({
-        ...errors,
-        rating: ''
-      });
-    }
-  };
-
-  const renderStars = () => {
-    const stars = [];
-    
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <label 
-          key={i} 
-          className={`star-label ${formData.rating >= i ? 'active' : ''}`}
-        >
-          <input
-            type="radio"
-            name="rating"
-            value={i}
-            checked={formData.rating === i}
-            onChange={() => handleRatingChange(i)}
-          />
-          <span className="star">★</span>
-        </label>
-      );
-    }
-    
-    return stars;
   };
 
   if (submitted) {
@@ -161,7 +125,13 @@ const FeedbackForm = ({ onSubmit }) => {
   }
 
   return (
-    <form className="feedback-form" onSubmit={handleSubmit}>
+    <motion.form 
+      className="feedback-form" 
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="form-group">
         <label htmlFor="name">Name</label>
         <input
@@ -171,6 +141,7 @@ const FeedbackForm = ({ onSubmit }) => {
           value={formData.name}
           onChange={handleChange}
           className={errors.name ? 'error' : ''}
+          placeholder="Your name"
         />
         {errors.name && <div className="error-message">{errors.name}</div>}
       </div>
@@ -184,6 +155,7 @@ const FeedbackForm = ({ onSubmit }) => {
           value={formData.email}
           onChange={handleChange}
           className={errors.email ? 'error' : ''}
+          placeholder="Your email address"
         />
         {errors.email && <div className="error-message">{errors.email}</div>}
       </div>
@@ -197,16 +169,9 @@ const FeedbackForm = ({ onSubmit }) => {
           value={formData.message}
           onChange={handleChange}
           className={errors.message ? 'error' : ''}
+          placeholder="Share your thoughts or feedback..."
         ></textarea>
         {errors.message && <div className="error-message">{errors.message}</div>}
-      </div>
-      
-      <div className="form-group">
-        <label>Rating</label>
-        <div className="star-rating">
-          {renderStars()}
-        </div>
-        {errors.rating && <div className="error-message">{errors.rating}</div>}
       </div>
       
       <motion.button
@@ -217,7 +182,7 @@ const FeedbackForm = ({ onSubmit }) => {
       >
         Submit Feedback
       </motion.button>
-    </form>
+    </motion.form>
   );
 };
 

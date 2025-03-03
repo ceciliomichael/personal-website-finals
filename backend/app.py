@@ -8,23 +8,12 @@ import time
 import os
 
 app = Flask(__name__)
-# Enable CORS with more permissive settings for development
+# Enable CORS for all routes
 CORS(app, 
-     resources={r"/api/*": {
-         "origins": "*", 
-         "methods": ["GET", "POST", "OPTIONS"],
-         "allow_headers": ["Content-Type", "Authorization"],
-         "supports_credentials": True
-     }})
-
-# Add a route to handle preflight requests for all API endpoints
-@app.route('/api/<path:path>', methods=['OPTIONS'])
-def handle_preflight(path):
-    response = jsonify({'status': 'ok'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    return response
+     origins="*", 
+     methods=["GET", "POST", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"],
+     supports_credentials=True)
 
 # Add CORS headers to all responses
 @app.after_request

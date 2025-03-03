@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 
-const API_BASE_URL = 'https://026vn2g1-5000.asse.devtunnels.ms//api';
+const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
 
 // Create the context
 export const UserContext = createContext(null);

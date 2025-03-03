@@ -202,22 +202,35 @@ const inMemoryCountDocuments = (collection, query = {}) => {
   return inMemoryFind(collection, { query }).length;
 };
 
-const inMemoryDeleteOne = (collection, query) => {
+const inMemoryDeleteOne = (collection, query = {}) => {
+  if (!inMemoryDb[collection]) {
+    console.error(`Collection ${collection} not found in in-memory DB`);
+    return { deletedCount: 0 };
+  }
+  
+  const initialLength = inMemoryDb[collection].length;
+  
+  // Find first matching document
+  let indexToDelete = -1;
   for (let i = 0; i < inMemoryDb[collection].length; i++) {
     const item = inMemoryDb[collection][i];
     let match = true;
-    
     for (const [key, value] of Object.entries(query)) {
       if (!(key in item) || item[key] !== value) {
         match = false;
         break;
       }
     }
-    
     if (match) {
-      inMemoryDb[collection].splice(i, 1);
-      return { deletedCount: 1 };
+      indexToDelete = i;
+      break;
     }
+  }
+  
+  // Delete if found
+  if (indexToDelete >= 0) {
+    inMemoryDb[collection].splice(indexToDelete, 1);
+    return { deletedCount: 1 };
   }
   
   return { deletedCount: 0 };
@@ -417,6 +430,7 @@ app.delete('/api/user/:udid', async (req, res) => {
 // Get user achievements
 app.get('/api/user/:udid/achievements', async (req, res) => {
   try {
+    console.log(`GET /api/user/${req.params.udid}/achievements called, using in-memory DB:`, usingInMemoryDb);
     const { udid } = req.params;
     
     if (usingInMemoryDb) {
@@ -426,8 +440,10 @@ app.get('/api/user/:udid/achievements', async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
       
-      // Get user achievements
-      const achievements = inMemoryFind("user_achievements", { query: { user_udid: udid } });
+      // Filter achievements manually for this user
+      const achievements = inMemoryDb.user_achievements.filter(a => a.user_udid === udid);
+      
+      console.log(`Found ${achievements.length} achievements for user ${udid}`);
       
       // If no achievements found, return empty array
       if (!achievements || achievements.length === 0) {
@@ -462,7 +478,7 @@ app.get('/api/user/:udid/achievements', async (req, res) => {
       return res.json(achievements);
     }
   } catch (error) {
-    console.error(`Error getting user achievements: ${error}`);
+    console.error(`Error getting user achievements: ${error.stack || error}`);
     return res.status(500).json({ error: `Server error: ${error.message}` });
   }
 });
@@ -470,6 +486,7 @@ app.get('/api/user/:udid/achievements', async (req, res) => {
 // Save user achievement
 app.post('/api/user/:udid/achievements', async (req, res) => {
   try {
+    console.log(`POST /api/user/${req.params.udid}/achievements called, using in-memory DB:`, usingInMemoryDb);
     const { udid } = req.params;
     const { achievement_id } = req.body;
     
@@ -484,25 +501,27 @@ app.post('/api/user/:udid/achievements', async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
       
-      // Check if achievement already exists - use a more thorough check
-      const existingAchievements = inMemoryFind("user_achievements", { 
-        query: { user_udid: udid, achievement_id }
-      });
+      // Check if achievement already exists
+      const existingAchievements = inMemoryDb.user_achievements.filter(
+        a => a.user_udid === udid && a.achievement_id === achievement_id
+      );
       
-      if (existingAchievements && existingAchievements.length > 0) {
+      if (existingAchievements.length > 0) {
         // Achievement already unlocked, just return the first one
         const existingAchievement = existingAchievements[0];
-        if (typeof existingAchievement._id !== 'string' && existingAchievement._id) {
-          existingAchievement._id = existingAchievement._id.toString();
-        }
         
         // If there are duplicates, clean them up
         if (existingAchievements.length > 1) {
           console.log(`Found ${existingAchievements.length} duplicate achievements for user ${udid}, achievement ${achievement_id}. Cleaning up...`);
-          // Keep the first one, delete the rest
-          for (let i = 1; i < existingAchievements.length; i++) {
-            inMemoryDeleteOne("user_achievements", { _id: existingAchievements[i]._id });
-          }
+          
+          // Keep only the first one in the array
+          inMemoryDb.user_achievements = inMemoryDb.user_achievements.filter(
+            a => a !== existingAchievements[0] && 
+            !(a.user_udid === udid && a.achievement_id === achievement_id)
+          );
+          
+          // Add back the first one
+          inMemoryDb.user_achievements.push(existingAchievements[0]);
         }
         
         return res.json(existingAchievement);
@@ -510,13 +529,14 @@ app.post('/api/user/:udid/achievements', async (req, res) => {
       
       // Create new achievement record
       const newAchievement = {
+        _id: Math.random().toString(36).substring(2, 15),
         user_udid: udid,
         achievement_id,
         unlocked_at: new Date().toISOString()
       };
       
-      const result = inMemoryInsertOne("user_achievements", newAchievement);
-      newAchievement._id = result.insertedId;
+      // Add to collection
+      inMemoryDb.user_achievements.push(newAchievement);
       
       return res.status(201).json(newAchievement);
     } else {
@@ -526,26 +546,15 @@ app.post('/api/user/:udid/achievements', async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
       
-      // Check if achievement already exists - use a more thorough check
-      const existingAchievements = await userAchievementsCollection.find({
+      // Check if achievement already exists
+      const existingAchievement = await userAchievementsCollection.findOne({ 
         user_udid: udid, 
-        achievement_id
-      }).toArray();
+        achievement_id 
+      });
       
-      if (existingAchievements && existingAchievements.length > 0) {
-        // Achievement already unlocked, just return the first one
-        const existingAchievement = existingAchievements[0];
+      if (existingAchievement) {
+        // Achievement already unlocked
         existingAchievement._id = existingAchievement._id.toString();
-        
-        // If there are duplicates, clean them up
-        if (existingAchievements.length > 1) {
-          console.log(`Found ${existingAchievements.length} duplicate achievements for user ${udid}, achievement ${achievement_id}. Cleaning up...`);
-          // Keep the first one, delete the rest
-          for (let i = 1; i < existingAchievements.length; i++) {
-            await userAchievementsCollection.deleteOne({ _id: existingAchievements[i]._id });
-          }
-        }
-        
         return res.json(existingAchievement);
       }
       
@@ -556,13 +565,14 @@ app.post('/api/user/:udid/achievements', async (req, res) => {
         unlocked_at: new Date()
       };
       
+      // Add to collection
       const result = await userAchievementsCollection.insertOne(newAchievement);
       newAchievement._id = result.insertedId.toString();
       
       return res.status(201).json(newAchievement);
     }
   } catch (error) {
-    console.error(`Error saving user achievement: ${error}`);
+    console.error(`Error saving achievement: ${error.stack || error}`);
     return res.status(500).json({ error: `Server error: ${error.message}` });
   }
 });

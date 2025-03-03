@@ -160,14 +160,34 @@ const inMemoryFind = (collection, options = {}) => {
 };
 
 const inMemoryUpdateOne = (collection, query, update, options = { upsert: false }) => {
-  const item = inMemoryFindOne(collection, query);
+  if (!inMemoryDb[collection]) {
+    console.error(`Collection ${collection} not found in in-memory DB`);
+    inMemoryDb[collection] = [];
+  }
   
-  if (item) {
-    // Apply updates
+  // Find the item index
+  let itemIndex = -1;
+  for (let i = 0; i < inMemoryDb[collection].length; i++) {
+    const item = inMemoryDb[collection][i];
+    let match = true;
+    for (const [key, value] of Object.entries(query)) {
+      if (!(key in item) || item[key] !== value) {
+        match = false;
+        break;
+      }
+    }
+    if (match) {
+      itemIndex = i;
+      break;
+    }
+  }
+  
+  if (itemIndex >= 0) {
+    // Item found, update it
     if (update.$set) {
-      Object.entries(update.$set).forEach(([key, value]) => {
-        item[key] = value;
-      });
+      for (const [key, value] of Object.entries(update.$set)) {
+        inMemoryDb[collection][itemIndex][key] = value;
+      }
     }
     
     return {
@@ -179,16 +199,21 @@ const inMemoryUpdateOne = (collection, query, update, options = { upsert: false 
     const newDoc = { ...query };
     
     if (update.$set) {
-      Object.entries(update.$set).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(update.$set)) {
         newDoc[key] = value;
-      });
+      }
     }
     
-    const result = inMemoryInsertOne(collection, newDoc);
+    // Generate a fake ObjectId
+    const fakeId = Math.random().toString(36).substring(2, 15);
+    newDoc._id = fakeId;
+    
+    // Add to collection
+    inMemoryDb[collection].push(newDoc);
     
     return {
       modifiedCount: 0,
-      upsertedId: result.insertedId
+      upsertedId: fakeId
     };
   }
   
@@ -658,7 +683,7 @@ app.get('/api/chat/messages', async (req, res) => {
     
     if (usingInMemoryDb) {
       // Initialize with sample data if empty
-      if (inMemoryDb.chat_messages.length === 0) {
+      if (!inMemoryDb.chat_messages || inMemoryDb.chat_messages.length === 0) {
         inMemoryDb.chat_messages = [
           {
             id: "sample-1",
@@ -672,15 +697,19 @@ app.get('/api/chat/messages', async (req, res) => {
       
       // Get messages from in-memory DB
       console.log(`In-memory DB has ${inMemoryDb.chat_messages.length} messages`);
-      const messages = inMemoryFind("chat_messages", {
-        sortKey: "timestamp",
-        sortDir: -1,
-        limit: 100
+      
+      // Sort messages by timestamp (newest first)
+      const sortedMessages = [...inMemoryDb.chat_messages].sort((a, b) => {
+        return (b.timestamp || 0) - (a.timestamp || 0);
       });
       
-      // Reverse to get chronological order
-      messages.reverse();
-      return res.json(messages);
+      // Limit to 100 messages
+      const limitedMessages = sortedMessages.slice(0, 100);
+      
+      // Reverse to get chronological order (oldest first)
+      limitedMessages.reverse();
+      
+      return res.json(limitedMessages);
     } else {
       // Get from MongoDB
       const messages = await chatMessagesCollection.find({}, { projection: { _id: 0 } })

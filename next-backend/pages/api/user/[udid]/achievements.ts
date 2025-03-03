@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ObjectId } from 'mongodb';
-import { connectToMongoDB, inMemoryFindOne, inMemoryInsertOne, inMemoryFind } from '@/lib/mongodb';
+import { connectToMongoDB, inMemoryFindOne, inMemoryInsertOne, inMemoryFind, inMemoryDb } from '@/lib/mongodb';
 import { UserAchievement } from '@/types';
 
 export default async function handler(
@@ -195,4 +195,4 @@ export default async function handler(
   
   // If we get here, the method is not supported
   return res.status(405).json({ error: 'Method not allowed' });
-} 
+}

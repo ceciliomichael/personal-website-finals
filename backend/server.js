@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 // Enable CORS for all routes
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me'] 
+    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me', 'https://webprog-cecilio.vercel.app'] 
     : '*',
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -28,17 +28,32 @@ app.options('*', cors());
 // Add CORS headers to all responses
 app.use((req, res, next) => {
   const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me']
+    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me', 'https://webprog-cecilio.vercel.app']
     : '*';
     
   const origin = req.headers.origin;
-  if (allowedOrigins === '*' || allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+  if (allowedOrigins === '*' || (origin && allowedOrigins.includes(origin))) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://webprog-cecilio.vercel.app');
   }
   
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
+// Add simple CORS handler as a fallback
+app.use((req, res, next) => {
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', 'https://webprog-cecilio.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    return res.status(204).send();
+  }
   next();
 });
 

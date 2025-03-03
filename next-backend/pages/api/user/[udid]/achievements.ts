@@ -34,13 +34,16 @@ export default async function handler(
         }
         
         // Convert ObjectId to string for JSON serialization if needed
-        achievements.forEach(achievement => {
-          if (achievement._id && typeof achievement._id !== 'string') {
-            achievement._id = achievement._id.toString();
-          }
+        const serializedAchievements = achievements.map(achievement => {
+          return {
+            ...achievement,
+            _id: achievement._id && typeof achievement._id !== 'string' 
+              ? achievement._id.toString() 
+              : achievement._id
+          };
         });
         
-        return res.json(achievements);
+        return res.json(serializedAchievements);
       } else {
         const db = client!.db(process.env.MONGO_DB_NAME);
         
@@ -54,13 +57,15 @@ export default async function handler(
         const achievements = await db.collection("user_achievements").find({ user_udid: udid }).toArray();
         
         // Convert ObjectId to string for JSON serialization
-        achievements.forEach(achievement => {
-          if (achievement._id) {
-            achievement._id = achievement._id.toString();
-          }
+        const serializedAchievements = achievements.map(achievement => {
+          // Create a new object with the _id as string
+          return {
+            ...achievement,
+            _id: achievement._id ? achievement._id.toString() : undefined
+          };
         });
         
-        return res.json(achievements);
+        return res.json(serializedAchievements);
       }
     } catch (error) {
       console.error(`Error getting user achievements: ${error instanceof Error ? error.stack : error}`);
@@ -156,8 +161,12 @@ export default async function handler(
         
         if (existingAchievement) {
           // Achievement already unlocked
-          existingAchievement._id = existingAchievement._id.toString();
-          return res.json(existingAchievement);
+          // Create a new object with the _id as string
+          const serializedAchievement = {
+            ...existingAchievement,
+            _id: existingAchievement._id ? existingAchievement._id.toString() : undefined
+          };
+          return res.json(serializedAchievement);
         }
         
         // Create new achievement record

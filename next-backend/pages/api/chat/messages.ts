@@ -80,8 +80,8 @@ export default async function handler(
       
       const currentTime = new Date();
       
-      // Create new message
-      let newMessage: ChatMessage = {
+      // Create new message without _id field (MongoDB will generate it)
+      let newMessage = {
         user: data.user,
         message: data.message,
         udid: data.udid || '',
@@ -96,8 +96,11 @@ export default async function handler(
       if (usingInMemoryDb) {
         // Insert new message
         console.log("Inserting message into in-memory storage");
-        newMessage.timestamp = currentTime.toISOString();  // Convert to string for in-memory storage
-        const result = inMemoryInsertOne("chat_messages", newMessage);
+        const messageForStorage = {
+          ...newMessage,
+          timestamp: currentTime.toISOString()  // Convert to string for in-memory storage
+        };
+        const result = inMemoryInsertOne("chat_messages", messageForStorage);
         console.log(`Insert result: ${result.insertedId}`);
         
         // Get total count of messages
@@ -123,9 +126,12 @@ export default async function handler(
         }
         
         // Prepare response object - already handled in memory version
-        responseMessage = newMessage;
-      } else {
-        const db = client!.db(process.env.MONGO_DB_NAME);
+        responseMessage = {
+          ...messageForStorage,
+          _id: result.insertedId
+        };
+      } else if (client) {
+        const db = client.db(process.env.MONGO_DB_NAME);
         
         // Insert new message
         console.log("Inserting message into MongoDB");
@@ -157,14 +163,16 @@ export default async function handler(
         responseMessage = { ...newMessage };
         
         // Convert the ObjectId to string if it exists (MongoDB adds this)
-        if (responseMessage._id) {
-          responseMessage._id = responseMessage._id.toString();
+        if (result.insertedId) {
+          responseMessage._id = result.insertedId.toString();
         }
         
         // Convert the timestamp to ISO format for JSON serialization
         if (responseMessage.timestamp instanceof Date) {
           responseMessage.timestamp = responseMessage.timestamp.toISOString();
         }
+      } else {
+        return res.status(500).json({ error: "Failed to connect to database" });
       }
       
       console.log("Returning success response");

@@ -2,8 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Ensure API routes are treated as serverless functions
-  output: 'standalone',
   // Configure headers for CORS
   async headers() {
     return [
@@ -35,4 +33,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;

@@ -60,6 +60,17 @@ app.use((req, res, next) => {
 // Body parser middleware
 app.use(express.json());
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    inMemoryDb: usingInMemoryDb,
+    mongodb: !usingInMemoryDb
+  });
+});
+
 // In-memory database fallback (will be used if MongoDB connection fails)
 const inMemoryDb = {
   users: [],
@@ -81,65 +92,27 @@ let db, usersCollection, activeUsersCollection, chatMessagesCollection, userAchi
 const MAX_CHAT_MESSAGES = 20;
 
 // Helper functions for in-memory DB operations
-const inMemoryFindOne = (collection, query = {}) => {
-  for (const item of inMemoryDb[collection]) {
-    let match = true;
-    for (const [key, value] of Object.entries(query)) {
-      if (!(key in item) || item[key] !== value) {
-        match = false;
-        break;
-      }
-    }
-    if (match) {
-      return item;
-    }
-  }
-  return null;
-};
-
-const inMemoryFind = (collection, { query = {}, projection = null, sortKey = null, sortDir = 1, limit = null } = {}) => {
-  let results = [];
-  
-  for (const item of inMemoryDb[collection]) {
-    let match = true;
-    for (const [key, value] of Object.entries(query)) {
-      if (!(key in item) || item[key] !== value) {
-        match = false;
-        break;
-      }
-    }
-    
-    if (match) {
-      // Apply projection if provided
-      if (projection) {
-        const projectedItem = {};
-        for (const [projKey, include] of Object.entries(projection)) {
-          if (include && projKey in item) {
-            projectedItem[projKey] = item[projKey];
-          } else if (projKey === '_id' && !include) {
-            // Skip _id field
-            continue;
-          }
-        }
-        results.push(projectedItem);
-      } else {
-        results.push({ ...item });
-      }
-    }
+const inMemoryFind = (collection, options = {}) => {
+  if (!inMemoryDb[collection]) {
+    console.error(`Collection ${collection} not found in in-memory DB`);
+    return [];
   }
   
-  // Sort if required
-  if (sortKey) {
+  let results = [...inMemoryDb[collection]];
+  
+  // Apply sorting if specified
+  if (options.sortKey) {
     results.sort((a, b) => {
-      const aVal = a[sortKey] || '';
-      const bVal = b[sortKey] || '';
-      return (sortDir === -1) ? (bVal > aVal ? 1 : -1) : (aVal > bVal ? 1 : -1);
+      if (options.sortDir === -1) {
+        return b[options.sortKey] - a[options.sortKey];
+      }
+      return a[options.sortKey] - b[options.sortKey];
     });
   }
   
   // Apply limit if specified
-  if (limit && results.length > limit) {
-    results = results.slice(0, limit);
+  if (options.limit && options.limit > 0) {
+    results = results.slice(0, options.limit);
   }
   
   return results;
@@ -645,34 +618,47 @@ app.get('/api/users/active', async (req, res) => {
 // Get chat messages
 app.get('/api/chat/messages', async (req, res) => {
   try {
+    console.log("GET /api/chat/messages called, using in-memory DB:", usingInMemoryDb);
+    
     if (usingInMemoryDb) {
-      // Get most recent messages, sorted by timestamp
-      let messages = inMemoryFind("chat_messages", {
-        projection: { _id: 0 },
+      // Initialize with sample data if empty
+      if (inMemoryDb.chat_messages.length === 0) {
+        inMemoryDb.chat_messages = [
+          {
+            id: "sample-1",
+            user_udid: "system",
+            username: "System",
+            message: "Welcome to the chat! This is using an in-memory database.",
+            timestamp: new Date().getTime()
+          }
+        ];
+      }
+      
+      // Get messages from in-memory DB
+      console.log(`In-memory DB has ${inMemoryDb.chat_messages.length} messages`);
+      const messages = inMemoryFind("chat_messages", {
         sortKey: "timestamp",
         sortDir: -1,
-        limit: MAX_CHAT_MESSAGES
+        limit: 100
       });
       
-      // Reverse to get chronological order (oldest first)
+      // Reverse to get chronological order
       messages.reverse();
-      
       return res.json(messages);
     } else {
-      // Get most recent messages, sorted by timestamp
+      // Get from MongoDB
       const messages = await chatMessagesCollection.find({}, { projection: { _id: 0 } })
         .sort({ timestamp: -1 })
-        .limit(MAX_CHAT_MESSAGES)
+        .limit(100)
         .toArray();
       
-      // Reverse to get chronological order (oldest first)
+      // Reverse to get chronological order
       messages.reverse();
-      
       return res.json(messages);
     }
   } catch (error) {
-    console.error(`Error getting chat messages: ${error}`);
-    return res.status(500).json({ error: `Server error: ${error.message}` });
+    console.error(`Error getting chat messages: ${error.stack || error}`);
+    return res.status(500).json({ error: "Failed to fetch messages", details: error.message });
   }
 });
 
@@ -871,4 +857,4 @@ app.get('/api/test-db', async (req, res) => {
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-}); 
+});

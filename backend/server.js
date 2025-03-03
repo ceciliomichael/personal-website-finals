@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Load environment variables from .env file
-dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env') });
+dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,7 +40,7 @@ const inMemoryDb = {
 };
 
 // MongoDB connection settings
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://100.64.1.2:27017/';
+const MONGO_URI = process.env.MONGO_URI;
 const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'portfolio_db';
 const MONGO_CONNECT_TIMEOUT = 5000; // 5 seconds timeout
 

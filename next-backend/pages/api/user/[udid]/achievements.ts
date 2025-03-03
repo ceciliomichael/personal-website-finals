@@ -123,7 +123,7 @@ export default async function handler(
         }
         
         // Create new achievement record
-        const newAchievement: UserAchievement = {
+        const newAchievement: Omit<UserAchievement, '_id'> = {
           user_udid: udid as string,
           achievement_id,
           unlocked_at: new Date().toISOString()
@@ -131,9 +131,14 @@ export default async function handler(
         
         // Add to collection
         const result = inMemoryInsertOne("user_achievements", newAchievement);
-        newAchievement._id = result.insertedId;
         
-        return res.status(201).json(newAchievement);
+        // Create response object with _id
+        const responseAchievement: UserAchievement = {
+          ...newAchievement,
+          _id: result.insertedId
+        };
+        
+        return res.status(201).json(responseAchievement);
       } else {
         const db = client!.db(process.env.MONGO_DB_NAME);
         
@@ -156,17 +161,22 @@ export default async function handler(
         }
         
         // Create new achievement record
-        const newAchievement: UserAchievement = {
+        const newAchievement: Omit<UserAchievement, '_id'> = {
           user_udid: udid as string,
           achievement_id,
-          unlocked_at: new Date()
+          unlocked_at: new Date().toISOString()
         };
         
         // Add to collection
         const result = await db.collection("user_achievements").insertOne(newAchievement);
-        newAchievement._id = result.insertedId.toString();
         
-        return res.status(201).json(newAchievement);
+        // Create response object with _id
+        const responseAchievement: UserAchievement = {
+          ...newAchievement,
+          _id: result.insertedId.toString()
+        };
+        
+        return res.status(201).json(responseAchievement);
       }
     } catch (error) {
       console.error(`Error saving achievement: ${error instanceof Error ? error.stack : error}`);

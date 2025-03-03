@@ -31,16 +31,21 @@ export default async function handler(
       }
       
       // Create new user with UDID
-      const newUser: User = {
+      const newUser: Omit<User, '_id'> = {
         name: userName,
         udid: uuidv4(),
         created_at: new Date().toISOString()
       };
       
       const result = inMemoryInsertOne("users", newUser);
-      newUser._id = result.insertedId;
       
-      return res.status(201).json(newUser);
+      // Create response object with _id
+      const responseUser: User = {
+        ...newUser,
+        _id: result.insertedId
+      };
+      
+      return res.status(201).json(responseUser);
     } else {
       const db = client!.db(process.env.MONGO_DB_NAME);
       const usersCollection = db.collection("users");
@@ -54,16 +59,21 @@ export default async function handler(
       }
       
       // Create new user with UDID
-      const newUser: User = {
+      const newUser: Omit<User, '_id'> = {
         name: userName,
         udid: uuidv4(),
         created_at: new Date()
       };
       
       const result = await usersCollection.insertOne(newUser);
-      newUser._id = result.insertedId.toString();
       
-      return res.status(201).json(newUser);
+      // Create response object with _id
+      const responseUser: User = {
+        ...newUser,
+        _id: result.insertedId.toString()
+      };
+      
+      return res.status(201).json(responseUser);
     }
   } catch (error) {
     console.error(`Error creating user: ${error}`);

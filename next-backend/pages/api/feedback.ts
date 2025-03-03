@@ -1,5 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { connectToMongoDB, inMemoryInsertOne } from '@/lib/mongodb';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { Feedback } from '@/types';
 
 export default async function handler(
@@ -12,20 +12,21 @@ export default async function handler(
   }
   
   try {
-    const data = req.body;
+    const { name, email, message, rating, udid } = req.body;
     
-    if (!data.name || !data.email || !data.message) {
-      return res.status(400).json({ error: "Name, email, and message are required" });
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required' });
     }
     
     const currentTime = new Date();
     
-    const feedback: Feedback = {
-      name: data.name,
-      email: data.email,
-      message: data.message,
-      rating: data.rating || 0,
-      udid: data.udid,
+    // Create feedback object without _id
+    const feedback: Omit<Feedback, '_id'> = {
+      name,
+      email,
+      message,
+      rating: rating || 0,
+      udid: udid || '',
       created_at: currentTime
     };
     
@@ -33,11 +34,16 @@ export default async function handler(
     
     if (usingInMemoryDb) {
       // Convert datetime to string for in-memory storage
-      feedback.created_at = currentTime.toISOString();
-      inMemoryInsertOne("feedback", feedback);
-    } else {
-      const db = client!.db(process.env.MONGO_DB_NAME);
+      const feedbackForStorage = {
+        ...feedback,
+        created_at: currentTime.toISOString()
+      };
+      inMemoryInsertOne("feedback", feedbackForStorage);
+    } else if (client) {
+      const db = client.db(process.env.MONGO_DB_NAME);
       await db.collection("feedback").insertOne(feedback);
+    } else {
+      return res.status(500).json({ error: "Failed to connect to database" });
     }
     
     return res.status(201).json({ status: "success" });

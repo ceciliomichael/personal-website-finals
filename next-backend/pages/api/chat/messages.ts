@@ -1,9 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { connectToMongoDB, inMemoryInsertOne, inMemoryFind, inMemoryCountDocuments, inMemoryDeleteOne } from '@/lib/mongodb';
 import { ChatMessage } from '@/types';
+import { ObjectId } from 'mongodb';
 
 // Maximum number of chat messages to keep
 const MAX_CHAT_MESSAGES = 20;
+
+// Define a type for the response message that includes _id
+interface ChatMessageResponse {
+  _id?: string;
+  user: any;
+  message: any;
+  udid: any;
+  timestamp: Date | string;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -89,7 +99,7 @@ export default async function handler(
       };
       console.log(`Created new message object: ${JSON.stringify(newMessage)}`);
       
-      let responseMessage;
+      let responseMessage: ChatMessageResponse;
       
       const { client, usingInMemoryDb } = await connectToMongoDB();
       

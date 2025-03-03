@@ -84,6 +84,36 @@
   padding-right: 0.5rem;
 }
 
+/* Loading state */
+.feedback-loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+/* Error state */
+.feedback-error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--danger-color);
+  font-size: 1.1rem;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+/* No feedback state */
+.no-feedback {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
 .feedback-comment {
   background-color: rgba(25, 25, 40, 0.7);
   border-radius: 12px;
@@ -122,6 +152,26 @@
   line-height: 1.6;
   color: var(--text-color);
   opacity: 0.9;
+  margin-bottom: 0.8rem;
+}
+
+/* Rating styles */
+.comment-rating {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(106, 17, 203, 0.2);
+}
+
+/* Submit error message */
+.submit-error {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
 }
 
 /* Custom scrollbar for comments list */

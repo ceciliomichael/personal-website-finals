@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useUser } from '../context/UserContext';
+import { addFeedback } from '../lib/supabase';
 import './FeedbackForm.css';
 
 const FeedbackForm = ({ onSubmit }) => {
@@ -9,10 +10,11 @@ const FeedbackForm = ({ onSubmit }) => {
     name: user?.name || '',
     email: '',
     message: '',
-    udid: user?.udid || ''
+    rating: 5 // Default rating
   });
   
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -72,22 +74,14 @@ const FeedbackForm = ({ onSubmit }) => {
     
     if (validateForm()) {
       try {
-        // Send feedback to the backend API
-        const response = await fetch(import.meta.env.VITE_API_URL + '/api/feedback', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        setIsSubmitting(true);
         
-        if (!response.ok) {
-          throw new Error('Failed to submit feedback');
-        }
+        // Add feedback using Supabase client
+        const newFeedback = await addFeedback(formData);
         
         // Call the onSubmit prop with the form data
         if (onSubmit) {
-          onSubmit(formData);
+          onSubmit(newFeedback);
         }
         
         // Show success message temporarily
@@ -100,11 +94,18 @@ const FeedbackForm = ({ onSubmit }) => {
             name: user?.name || '',
             email: '',
             message: '',
-            udid: user?.udid || ''
+            rating: 5
           });
         }, 3000);
       } catch (error) {
         console.error('Error submitting feedback:', error);
+        // Show error in the form
+        setErrors({
+          ...errors,
+          submit: 'Failed to submit feedback. Please try again.'
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -142,6 +143,7 @@ const FeedbackForm = ({ onSubmit }) => {
           onChange={handleChange}
           className={errors.name ? 'error' : ''}
           placeholder="Your name"
+          disabled={isSubmitting}
         />
         {errors.name && <div className="error-message">{errors.name}</div>}
       </div>
@@ -156,6 +158,7 @@ const FeedbackForm = ({ onSubmit }) => {
           onChange={handleChange}
           className={errors.email ? 'error' : ''}
           placeholder="Your email address"
+          disabled={isSubmitting}
         />
         {errors.email && <div className="error-message">{errors.email}</div>}
       </div>
@@ -170,17 +173,35 @@ const FeedbackForm = ({ onSubmit }) => {
           onChange={handleChange}
           className={errors.message ? 'error' : ''}
           placeholder="Share your thoughts or feedback..."
+          disabled={isSubmitting}
         ></textarea>
         {errors.message && <div className="error-message">{errors.message}</div>}
       </div>
+
+      <div className="form-group">
+        <label htmlFor="rating">Rating (1-5)</label>
+        <input
+          type="number"
+          id="rating"
+          name="rating"
+          min="1"
+          max="5"
+          value={formData.rating}
+          onChange={handleChange}
+          disabled={isSubmitting}
+        />
+      </div>
+      
+      {errors.submit && <div className="error-message submit-error">{errors.submit}</div>}
       
       <motion.button
         type="submit"
         className="submit-button"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        disabled={isSubmitting}
       >
-        Submit Feedback
+        {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
       </motion.button>
     </motion.form>
   );

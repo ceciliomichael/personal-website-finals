@@ -9,6 +9,7 @@ import Feedback from '../components/Feedback';
 import AchievementNotification from '../components/AchievementNotification';
 import './Portfolio.css';
 import { useUser } from '../context/UserContext';
+import { useDialog } from '../context/DialogContext';
 
 import profile from '../assets/images/profile/me.jpg';
 import gallery1 from '../assets/images/gallery/image1.png';
@@ -454,6 +455,7 @@ const Portfolio = ({ userName }) => {
   const profileDropdownRef = useRef(null);
   const { sendMessage } = useAI();
   const { user, saveAchievement, isAchievementUnlocked, achievements: userAchievements } = useUser();
+  const { showSuccess, showError, showConfirm, setLoading } = useDialog();
 
   // Initialize local achievements state with unlocked status from the database
   const [localAchievements, setLocalAchievements] = useState(() => {
@@ -621,12 +623,53 @@ const Portfolio = ({ userName }) => {
   };
 
   const handleDeleteAccount = () => {
-    if (window.confirm('Are you sure you want to delete your account? This will remove all your achievements and personal data, but chat history will be preserved.')) {
-      // Here you would implement the actual account deletion logic
-      // For now, we'll just show an alert
-      alert('Account data deleted successfully. Chat history has been preserved.');
-      // You could redirect to login page or reset user state here
-    }
+    showConfirm(
+      'Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      'Delete',
+      'Cancel',
+      async () => {
+        try {
+          // Set loading state
+          setLoading(true);
+          
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${user.udid}`, {
+            method: 'DELETE',
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete account');
+          }
+          
+          // Clear localStorage
+          localStorage.removeItem('userUdid');
+          
+          // Turn off loading and show success message
+          setLoading(false);
+          
+          showSuccess(
+            'Account Deleted',
+            'Your account has been successfully deleted. You will now be redirected to the login page.',
+            'OK',
+            () => {
+              // Refresh the page to return to login
+              window.location.reload();
+            }
+          );
+        } catch (error) {
+          console.error('Error deleting account:', error);
+          
+          // Turn off loading and show error message
+          setLoading(false);
+          
+          showError(
+            'Error',
+            'Failed to delete account. Please try again later.',
+            'OK'
+          );
+        }
+      }
+    );
   };
 
   return (

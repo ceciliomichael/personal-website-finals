@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useUser } from '../context/UserContext';
+import { useDialog } from '../context/DialogContext';
 import './Welcome.css';
 
 const Welcome = ({ onNameSubmit, isLoading: propIsLoading }) => {
   const [name, setName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
   const [stars, setStars] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
   const nameInputRef = useRef(null);
   const { registerUser, loading: userLoading } = useUser();
+  const { showError } = useDialog();
   
   const isLoading = propIsLoading || userLoading;
 
@@ -50,6 +53,9 @@ const Welcome = ({ onNameSubmit, isLoading: propIsLoading }) => {
     e.preventDefault();
     if (name.trim()) {
       try {
+        // Clear any previous error
+        setErrorMessage('');
+        
         // Register the user and get UDID
         const userData = await registerUser(name);
         
@@ -57,6 +63,25 @@ const Welcome = ({ onNameSubmit, isLoading: propIsLoading }) => {
         onNameSubmit(userData.name, userData.udid);
       } catch (error) {
         console.error('Error registering user:', error);
+        
+        // Display error in the UI
+        const errorMsg = error.message || 'An error occurred while registering';
+        setErrorMessage(errorMsg);
+        
+        // Show error dialog
+        if (error.message.includes('Username already taken')) {
+          showError(
+            'Username Taken',
+            'This username is already taken. Please choose a different name.',
+            'OK'
+          );
+        } else {
+          showError(
+            'Registration Error',
+            errorMsg,
+            'OK'
+          );
+        }
       }
     }
   };
@@ -125,6 +150,12 @@ const Welcome = ({ onNameSubmit, isLoading: propIsLoading }) => {
                   maxLength={30}
                   required
                 />
+                
+                {errorMessage && (
+                  <div className="error-message">
+                    {errorMessage}
+                  </div>
+                )}
                 
                 <motion.button
                   type="submit"

@@ -74,6 +74,13 @@ export const UserProvider = ({ children }) => {
     if (!user || !user.udid) return null;
     
     try {
+      // Check if achievement already exists in local state before making API call
+      const achievementExists = achievements.some(a => a.achievement_id === achievementId);
+      if (achievementExists) {
+        console.log(`Achievement ${achievementId} already exists, skipping save`);
+        return achievements.find(a => a.achievement_id === achievementId);
+      }
+      
       const response = await fetch(`${API_BASE_URL}/user/${user.udid}/achievements`, {
         method: 'POST',
         headers: {

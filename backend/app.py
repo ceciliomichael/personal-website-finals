@@ -32,7 +32,7 @@ in_memory_db = {
 }
 
 # MongoDB connection settings
-MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://100.64.1.2:27017/')
+MONGO_URI = os.environ.get('MONGO_URI', 'mongodb+srv://ultrassniper:364235@personalprojects.lyn45.mongodb.net/')
 MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'portfolio_db')
 MONGO_CONNECT_TIMEOUT = 5000  # 5 seconds timeout
 

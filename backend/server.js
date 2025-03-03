@@ -14,17 +14,31 @@ const PORT = process.env.PORT || 5000;
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: '*',
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me'] 
+    : '*',
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
+// CORS preflight handling
+app.options('*', cors());
+
 // Add CORS headers to all responses
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? ['https://personal-website6.vercel.app', 'https://www.ultrawavelet.me', 'https://ultrawavelet.me']
+    : '*';
+    
+  const origin = req.headers.origin;
+  if (allowedOrigins === '*' || allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
 

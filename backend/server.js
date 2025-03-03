@@ -92,6 +92,47 @@ let db, usersCollection, activeUsersCollection, chatMessagesCollection, userAchi
 const MAX_CHAT_MESSAGES = 20;
 
 // Helper functions for in-memory DB operations
+const inMemoryFindOne = (collection, query = {}) => {
+  if (!inMemoryDb[collection]) {
+    console.error(`Collection ${collection} not found in in-memory DB`);
+    return null;
+  }
+  
+  for (const item of inMemoryDb[collection]) {
+    let match = true;
+    for (const [key, value] of Object.entries(query)) {
+      if (!(key in item) || item[key] !== value) {
+        match = false;
+        break;
+      }
+    }
+    if (match) {
+      return item;
+    }
+  }
+  return null;
+};
+
+const inMemoryInsertOne = (collection, document) => {
+  if (!inMemoryDb[collection]) {
+    console.error(`Collection ${collection} not found in in-memory DB`);
+    inMemoryDb[collection] = [];
+  }
+  
+  // Generate a fake ObjectId (just a string)
+  const fakeId = Math.random().toString(36).substring(2, 15);
+  document._id = fakeId;
+  
+  // Add to collection
+  inMemoryDb[collection].push(document);
+  
+  // Return result similar to MongoDB
+  return {
+    acknowledged: true,
+    insertedId: fakeId
+  };
+};
+
 const inMemoryFind = (collection, options = {}) => {
   if (!inMemoryDb[collection]) {
     console.error(`Collection ${collection} not found in in-memory DB`);
@@ -116,21 +157,6 @@ const inMemoryFind = (collection, options = {}) => {
   }
   
   return results;
-};
-
-const inMemoryInsertOne = (collection, document) => {
-  // Add _id if not present
-  if (!('_id' in document)) {
-    document._id = uuidv4();
-  }
-  
-  // Add to collection
-  inMemoryDb[collection].push(document);
-  
-  // Return a mock result
-  return {
-    insertedId: document._id
-  };
 };
 
 const inMemoryUpdateOne = (collection, query, update, options = { upsert: false }) => {

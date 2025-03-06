@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
+import { getMessages, sendMessage, getActiveUsers, updateActiveUser } from '../lib/supabase';
 import './Lobby.css';
-
-// API Base URL from environment or default
-const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
 
 // Helper to format message timestamps
 const formatTimestamp = (isoString) => {
@@ -28,16 +26,10 @@ const Lobby = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Fetch messages from API
+  // Fetch messages from Supabase
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/chat/messages`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch messages');
-      }
-      
-      const data = await response.json();
+      const data = await getMessages();
       setMessages(data);
       setLoading(false);
     } catch (err) {
@@ -47,16 +39,10 @@ const Lobby = () => {
     }
   };
 
-  // Fetch active users
+  // Fetch active users from Supabase
   const fetchActiveUsers = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/active`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch active users');
-      }
-      
-      const data = await response.json();
+      const data = await getActiveUsers();
       setOnlineUsers(data);
     } catch (err) {
       console.error('Error fetching active users:', err);
@@ -64,28 +50,34 @@ const Lobby = () => {
     }
   };
 
-  // Send message to API
-  const sendMessage = async (messageText) => {
+  // Update user's active status
+  const updateUserStatus = async () => {
+    if (!user || !user.udid || !user.name) {
+      console.warn('Cannot update user status: missing user data');
+      return;
+    }
+    
+    try {
+      await updateActiveUser({
+        udid: user.udid,
+        name: user.name
+      });
+    } catch (err) {
+      // Log the error but don't throw it to prevent disrupting the user experience
+      console.error('Error updating active status:', err);
+    }
+  };
+
+  // Send message to Supabase
+  const handleSendMessage = async (messageText) => {
     if (!user) return;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/chat/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          udid: user.udid,
-          user: user.name,
-          message: messageText
-        }),
+      await sendMessage({
+        udid: user.udid,
+        user: user.name,
+        message: messageText
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-      
-      const newMessage = await response.json();
       
       // Fetch all messages again to make sure we have the latest
       fetchMessages();
@@ -102,7 +94,7 @@ const Lobby = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputMessage.trim()) {
-      sendMessage(inputMessage.trim());
+      handleSendMessage(inputMessage.trim());
     }
   };
 
@@ -112,16 +104,29 @@ const Lobby = () => {
     fetchMessages();
     fetchActiveUsers();
     
+    // Update user's active status
+    if (user) {
+      updateUserStatus();
+    }
+    
     // Set up polling intervals
     messagesPollRef.current = setInterval(fetchMessages, 3000); // Poll messages every 3 seconds
     usersPollRef.current = setInterval(fetchActiveUsers, 10000); // Poll users every 10 seconds
+    
+    // Update active status every minute
+    const activeStatusInterval = setInterval(() => {
+      if (user) {
+        updateUserStatus();
+      }
+    }, 60000);
     
     // Cleanup on unmount
     return () => {
       clearInterval(messagesPollRef.current);
       clearInterval(usersPollRef.current);
+      clearInterval(activeStatusInterval);
     };
-  }, []);
+  }, [user]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -140,7 +145,7 @@ const Lobby = () => {
       <div className="lobby-sidebar">
         <div className="lobby-info">
           <h3>Visitor Lobby</h3>
-          <p>This is a private test environment. Chat messages are stored in MongoDB and limited to the most recent 20.</p>
+          <p>This is a private test environment. Chat messages are stored in Supabase and limited to the most recent 20.</p>
         </div>
         
         <div className="online-users">
@@ -187,7 +192,7 @@ const Lobby = () => {
             <AnimatePresence>
               {messages.map((msg) => (
                 <motion.div
-                  key={msg.id || msg._id || `${msg.user}-${msg.timestamp}`}
+                  key={msg.id || `${msg.user}-${msg.timestamp}`}
                   className={`message ${msg.udid === user?.udid ? 'my-message' : 'other-message'}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -195,7 +200,7 @@ const Lobby = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="message-header">
-                    <span className="message-user">{msg.user || msg.userName}</span>
+                    <span className="message-user">{msg.user}</span>
                     <span className="message-time">{formatTimestamp(msg.timestamp)}</span>
                   </div>
                   <div className="message-content">{msg.message}</div>

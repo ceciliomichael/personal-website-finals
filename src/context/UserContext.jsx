@@ -1,6 +1,12 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
+import { 
+  getActiveUsers, 
+  updateActiveUser, 
+  registerUser as supabaseRegisterUser,
+  getUserByUdid,
+  getUserAchievements,
+  saveUserAchievement
+} from '../lib/supabase';
 
 // Create the context
 export const UserContext = createContext(null);
@@ -21,10 +27,10 @@ export const UserProvider = ({ children }) => {
         const storedUdid = localStorage.getItem('userUdid');
         
         if (storedUdid) {
-          const response = await fetch(`${API_BASE_URL}/user/${storedUdid}`);
+          // Use Supabase to get user by UDID
+          const userData = await getUserByUdid(storedUdid);
           
-          if (response.ok) {
-            const userData = await response.json();
+          if (userData) {
             setUser(userData);
             
             // Update user's active status
@@ -33,7 +39,7 @@ export const UserProvider = ({ children }) => {
             // Load user achievements
             loadUserAchievements(userData.udid);
           } else {
-            // If user not found or other error, clear localStorage
+            // If user not found, clear localStorage
             localStorage.removeItem('userUdid');
           }
         }
@@ -48,65 +54,75 @@ export const UserProvider = ({ children }) => {
     checkExistingUser();
   }, []);
 
-  // Function to load user achievements from the server
+  // Function to load user achievements from Supabase
   const loadUserAchievements = async (udid) => {
-    if (!udid) return;
+    if (!udid) {
+      console.warn('Cannot load achievements: no user UDID provided');
+      return;
+    }
     
     try {
       setAchievementsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/user/${udid}/achievements`);
+      console.log(`Loading achievements for user ${udid}`);
+      const achievementsData = await getUserAchievements(udid);
       
-      if (response.ok) {
-        const achievementsData = await response.json();
+      // Only update state if we got a valid array
+      if (Array.isArray(achievementsData)) {
+        console.log(`Loaded ${achievementsData.length} achievements for user ${udid}`);
         setAchievements(achievementsData);
       } else {
-        console.error('Failed to load achievements');
+        console.warn(`Invalid achievements data received for user ${udid}:`, achievementsData);
+        setAchievements([]);
       }
     } catch (err) {
       console.error('Error loading achievements:', err);
+      setAchievements([]);
     } finally {
       setAchievementsLoading(false);
     }
   };
 
-  // Function to save a user achievement to the server
+  // Function to save a user achievement to Supabase
   const saveAchievement = async (achievementId) => {
-    if (!user || !user.udid) return null;
+    if (!user || !user.udid) {
+      console.warn('Cannot save achievement: no user is logged in');
+      return null;
+    }
     
     try {
       // Check if achievement already exists in local state before making API call
       const achievementExists = achievements.some(a => a.achievement_id === achievementId);
       if (achievementExists) {
-        console.log(`Achievement ${achievementId} already exists, skipping save`);
+        console.log(`Achievement ${achievementId} already exists in local state, skipping save`);
         return achievements.find(a => a.achievement_id === achievementId);
       }
       
-      const response = await fetch(`${API_BASE_URL}/user/${user.udid}/achievements`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ achievement_id: achievementId }),
-      });
+      console.log(`Saving achievement ${achievementId} for user ${user.udid}`);
+      const savedAchievement = await saveUserAchievement(user.udid, achievementId);
       
-      if (response.ok) {
-        const savedAchievement = await response.json();
-        
-        // Update local achievements state
-        setAchievements(prevAchievements => {
-          // Check if achievement already exists in state
-          const exists = prevAchievements.some(a => a.achievement_id === achievementId);
-          if (exists) return prevAchievements;
-          
-          // Add new achievement to state
-          return [...prevAchievements, savedAchievement];
-        });
-        
-        return savedAchievement;
-      } else {
-        console.error('Failed to save achievement');
+      if (!savedAchievement) {
+        console.warn(`Failed to save achievement ${achievementId}`);
         return null;
       }
+      
+      // Update local achievements state
+      setAchievements(prevAchievements => {
+        // Check if achievement already exists in state (might have been added in another tab/window)
+        const exists = prevAchievements.some(a => 
+          a.achievement_id === savedAchievement.achievement_id
+        );
+        
+        if (exists) {
+          console.log(`Achievement ${achievementId} already in state, not adding again`);
+          return prevAchievements;
+        }
+        
+        console.log(`Adding achievement ${achievementId} to local state`);
+        // Add new achievement to state
+        return [...prevAchievements, savedAchievement];
+      });
+      
+      return savedAchievement;
     } catch (err) {
       console.error('Error saving achievement:', err);
       return null;
@@ -122,11 +138,9 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchOnlineUsers = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/users/active`);
-        if (response.ok) {
-          const users = await response.json();
-          setOnlineUsers(users);
-        }
+        // Use Supabase to fetch active users
+        const users = await getActiveUsers();
+        setOnlineUsers(users);
       } catch (err) {
         console.error('Error fetching online users:', err);
       }
@@ -162,18 +176,19 @@ export const UserProvider = ({ children }) => {
 
   // Function to update user's active status
   const updateUserActivity = async (userData) => {
+    if (!userData || !userData.udid || !userData.name) {
+      console.warn('Cannot update user activity: missing user data');
+      return;
+    }
+    
     try {
-      await fetch(`${API_BASE_URL}/users/active`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          udid: userData.udid,
-          name: userData.name
-        }),
+      // Use Supabase to update active user
+      await updateActiveUser({
+        udid: userData.udid,
+        name: userData.name
       });
     } catch (err) {
+      // Log the error but don't throw it to prevent disrupting the user experience
       console.error('Error updating user activity:', err);
     }
   };
@@ -184,41 +199,43 @@ export const UserProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE_URL}/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: userName }),
-      });
-      
-      const responseData = await response.json();
-      
-      if (!response.ok) {
-        if (response.status === 409) {
-          setError(responseData.error || 'Username already taken');
-          throw new Error(responseData.error || 'Username already taken');
-        } else {
-          setError(responseData.error || 'Failed to register user');
-          throw new Error(responseData.error || 'Failed to register user');
-        }
-      }
+      // Use Supabase to register user
+      const userData = await supabaseRegisterUser(userName);
       
       // Save UDID to localStorage
-      localStorage.setItem('userUdid', responseData.udid);
+      localStorage.setItem('userUdid', userData.udid);
       
       // Update state
-      setUser(responseData);
+      setUser(userData);
       
       // Update user's active status
-      updateUserActivity(responseData);
+      try {
+        await updateUserActivity(userData);
+      } catch (activityErr) {
+        // Log but don't fail if updating activity fails
+        console.warn('Error updating user activity during registration:', activityErr);
+      }
       
       // Load user achievements
-      loadUserAchievements(responseData.udid);
+      try {
+        await loadUserAchievements(userData.udid);
+      } catch (achievementErr) {
+        // Log but don't fail if loading achievements fails
+        console.warn('Error loading achievements during registration:', achievementErr);
+      }
       
-      return responseData;
+      return userData;
     } catch (err) {
       console.error('Error registering user:', err);
+      
+      // Set appropriate error message
+      if (err.message === 'Username already taken' || 
+          (err.code === '23505' && err.message?.includes('users_name_key'))) {
+        setError('Username already taken');
+      } else {
+        setError('Failed to register user: ' + (err.message || 'Unknown error'));
+      }
+      
       throw err;
     } finally {
       setLoading(false);
@@ -254,7 +271,7 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Custom hook for using the context
+// Custom hook to use the user context
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {

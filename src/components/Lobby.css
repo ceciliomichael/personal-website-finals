@@ -243,8 +243,22 @@
 }
 
 @media (max-width: 480px) {
+  .mobile-header {
+    display: flex;
+  }
+  
+  .lobby-container {
+    height: auto;
+    max-height: 500px;
+    border-radius: 10px;
+  }
+  
   .lobby-sidebar {
     flex-direction: column;
+    padding: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease;
   }
   
   .online-users, .lobby-info {
@@ -253,10 +267,81 @@
   
   .online-users {
     margin-bottom: 10px;
+    height: auto;
+    max-height: 120px;
+  }
+  
+  .lobby-info {
+    margin-bottom: 10px;
+  }
+  
+  .lobby-info p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+  }
+  
+  .online-users h4, .lobby-info h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+  }
+  
+  .user-list {
+    max-height: 80px;
+    margin-top: 5px;
+  }
+  
+  .user-list li {
+    padding: 5px;
+    margin-bottom: 3px;
   }
   
   .message {
     max-width: 90%;
+    padding: 8px 12px;
+  }
+  
+  .message-header {
+    margin-bottom: 3px;
+    padding-bottom: 3px;
+  }
+  
+  .message-user {
+    font-size: 0.9rem;
+  }
+  
+  .message-time {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+  
+  .message-content {
+    font-size: 0.9rem;
+  }
+  
+  .message-form {
+    padding: 8px;
+  }
+  
+  .message-input {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .send-button {
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+  
+  .chat-messages {
+    padding: 10px;
+    gap: 8px;
+    max-height: 250px;
+  }
+  
+  .lobby-chat {
+    flex: 1;
+    min-height: 300px;
   }
 }
 
@@ -331,4 +416,37 @@
 .message-input:disabled {
   background-color: rgba(15, 15, 26, 0.5);
   cursor: not-allowed;
+}
+
+/* Mobile header styles */
+.mobile-header {
+  display: none;
+  background-color: #fd7e14;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.toggle-sidebar-btn {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-sidebar-btn:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 } 

@@ -454,7 +454,7 @@ const Portfolio = ({ userName }) => {
   const transformComponentRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const { sendMessage } = useAI();
-  const { user, saveAchievement, isAchievementUnlocked, achievements: userAchievements } = useUser();
+  const { user, onlineUsers, achievements: userAchievements, saveAchievement, isAchievementUnlocked, deleteUserAccount } = useUser();
   const { showSuccess, showError, showConfirm, setLoading } = useDialog();
 
   // Initialize local achievements state with unlocked status from the database
@@ -633,16 +633,8 @@ const Portfolio = ({ userName }) => {
           // Set loading state
           setLoading(true);
           
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${user.udid}`, {
-            method: 'DELETE',
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to delete account');
-          }
-          
-          // Clear localStorage
-          localStorage.removeItem('userUdid');
+          // Use the deleteUserAccount function from UserContext
+          const result = await deleteUserAccount();
           
           // Turn off loading and show success message
           setLoading(false);

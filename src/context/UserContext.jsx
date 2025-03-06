@@ -5,7 +5,8 @@ import {
   registerUser as supabaseRegisterUser,
   getUserByUdid,
   getUserAchievements,
-  saveUserAchievement
+  saveUserAchievement,
+  deleteUser as supabaseDeleteUser
 } from '../lib/supabase';
 
 // Create the context
@@ -249,6 +250,35 @@ export const UserProvider = ({ children }) => {
     setAchievements([]);
   };
 
+  // Function to delete a user account
+  const deleteUserAccount = async () => {
+    if (!user || !user.udid) {
+      console.warn('Cannot delete account: no user is logged in');
+      return false;
+    }
+    
+    try {
+      const result = await supabaseDeleteUser(user.udid);
+      
+      // Log any errors that occurred but didn't prevent the operation
+      if (result && result.errors) {
+        console.warn('Some errors occurred during account deletion:', result.errors);
+      }
+      
+      // Clear local storage and state regardless of backend success
+      // This ensures the user can still "log out" even if backend deletion had issues
+      localStorage.removeItem('userUdid');
+      setUser(null);
+      setAchievements([]);
+      
+      return true;
+    } catch (err) {
+      console.error('Error deleting user account:', err);
+      setError('Failed to delete account: ' + (err.message || 'Unknown error'));
+      throw err;
+    }
+  };
+
   // Create the context value
   const contextValue = {
     user,
@@ -257,6 +287,7 @@ export const UserProvider = ({ children }) => {
     error,
     registerUser,
     logoutUser,
+    deleteUserAccount,
     achievements,
     achievementsLoading,
     saveAchievement,

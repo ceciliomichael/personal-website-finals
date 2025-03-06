@@ -647,6 +647,15 @@
   .gallery-grid {
     grid-template-columns: 1fr;
   }
+  
+  .lobby-section {
+    height: auto;
+  }
+  
+  .lobby-section .lobby-container {
+    height: 600px;
+    max-height: 600px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -670,4 +679,59 @@
     font-size: 1rem;
     margin-bottom: 1.5rem;
   }
+  
+  .lobby-section .lobby-container {
+    height: 500px;
+    max-height: 500px;
+  }
+  
+  .lobby-section .mobile-header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  
+  .lobby-section .lobby-sidebar {
+    padding: 8px;
+  }
+  
+  .lobby-section .online-users h4, 
+  .lobby-section .lobby-info h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
+  .lobby-section .lobby-info p {
+    font-size: 0.85rem;
+  }
+  
+  .lobby-section .message-form {
+    padding: 10px;
+  }
+  
+  .lobby-section .message-input {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .lobby-section .send-button {
+    padding: 0 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Lobby section styles */
+.lobby-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lobby-section h2 {
+  color: #fd7e14;
+  margin-bottom: 10px;
+}
+
+.lobby-section p {
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.8);
 } 

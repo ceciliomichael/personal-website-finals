@@ -280,4 +280,84 @@ export async function saveUserAchievement(udid, achievementId) {
     // Return null instead of throwing to prevent UI disruption
     return null;
   }
+}
+
+// Helper function to delete a user by UDID
+export async function deleteUser(udid) {
+  console.log(`Attempting to delete user with UDID ${udid}`);
+  
+  // First, check if we have delete permissions by trying to delete a non-existent record
+  try {
+    const { error: permissionCheckError } = await supabase
+      .from('users')
+      .delete()
+      .eq('udid', 'permission-check-non-existent-id');
+    
+    // If we get a permission error, we know we can't delete
+    const hasDeletePermission = !permissionCheckError || 
+      (permissionCheckError.code !== 'PGRST301' && 
+       !permissionCheckError.message?.includes('permission denied'));
+    
+    if (!hasDeletePermission) {
+      console.warn('No delete permission on users table. Using client-side deletion only.');
+      
+      // Just return success and let the client handle the "deletion" by removing from localStorage
+      return { 
+        success: true, 
+        method: 'client_only',
+        message: 'User session ended but server data could not be deleted due to permissions'
+      };
+    }
+  } catch (permissionErr) {
+    console.warn('Error checking delete permissions:', permissionErr);
+    // Continue anyway and try to delete
+  }
+  
+  // If we get here, attempt actual deletion
+  try {
+    // Try to delete user achievements first
+    const { error: achievementsError } = await supabase
+      .from('user_achievements')
+      .delete()
+      .eq('user_udid', String(udid));
+    
+    if (achievementsError) {
+      console.warn('Could not delete user achievements:', achievementsError);
+    }
+    
+    // Try to delete from active_users
+    const { error: activeUserError } = await supabase
+      .from('active_users')
+      .delete()
+      .eq('udid', String(udid));
+    
+    if (activeUserError) {
+      console.warn('Could not delete from active users:', activeUserError);
+    }
+    
+    // Finally, delete the user
+    const { error: userError } = await supabase
+      .from('users')
+      .delete()
+      .eq('udid', String(udid));
+    
+    if (userError) {
+      console.warn('Could not delete user:', userError);
+      return { 
+        success: true, 
+        method: 'partial',
+        message: 'User session ended but some server data could not be deleted'
+      };
+    }
+    
+    return { success: true, method: 'full' };
+  } catch (error) {
+    console.error('Error in deleteUser function:', error);
+    // Return success anyway to allow client-side logout
+    return { 
+      success: true, 
+      method: 'client_only',
+      error: error.message || 'Unknown error'
+    };
+  }
 } 

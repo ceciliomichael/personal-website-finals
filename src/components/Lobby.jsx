@@ -10,16 +10,32 @@ const formatTimestamp = (isoString) => {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-const Lobby = () => {
+const Lobby = ({ userName }) => {
   const { user, loading: userLoading, error: userError } = useUser();
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
   const messagesPollRef = useRef(null);
   const usersPollRef = useRef(null);
+
+  // Check if the device is mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 480);
+      // Always show sidebar when not on mobile
+      if (window.innerWidth > 480) {
+        setShowSidebar(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -98,6 +114,11 @@ const Lobby = () => {
     }
   };
 
+  // Toggle sidebar visibility on mobile
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   // Set up polling for messages and users
   useEffect(() => {
     // Initial fetch
@@ -142,33 +163,44 @@ const Lobby = () => {
 
   return (
     <div className="lobby-container">
-      <div className="lobby-sidebar">
-        <div className="lobby-info">
-          <h3>Visitor Lobby</h3>
-          <p>This is a private test environment. Chat messages are stored in Supabase and limited to the most recent 20.</p>
+      {isMobile && (
+        <div className="mobile-header">
+          <h3>VISITOR LOBBY</h3>
+          <button className="toggle-sidebar-btn" onClick={toggleSidebar}>
+            {showSidebar ? 'X' : 'Users'}
+          </button>
         </div>
-        
-        <div className="online-users">
-          <h4>Online Users ({onlineUsers.length})</h4>
-          <ul className="user-list">
-            {onlineUsers.map(user => (
-              <motion.li 
-                key={user.udid}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="user-status"></span>
-                {user.name}
-              </motion.li>
-            ))}
-            {onlineUsers.length === 0 && (
-              <li className="no-users">No other visitors online</li>
-            )}
-          </ul>
+      )}
+      
+      {(!isMobile || showSidebar) && (
+        <div className="lobby-sidebar">
+          <div className="lobby-info">
+            <h3>Visitor Lobby</h3>
+            <p>This is a private test environment. Chat messages are stored in Supabase and limited to the most recent 20.</p>
+          </div>
+          
+          <div className="online-users">
+            <h4>Online Users ({onlineUsers.length})</h4>
+            <ul className="user-list">
+              {onlineUsers.map(user => (
+                <motion.li 
+                  key={user.udid}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="user-status"></span>
+                  {user.name}
+                </motion.li>
+              ))}
+              {onlineUsers.length === 0 && (
+                <li className="no-users">No other visitors online</li>
+              )}
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
       
       <div className="lobby-chat">
         <div className="chat-messages">

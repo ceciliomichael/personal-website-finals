@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { 
+  FaUser, 
+  FaRobot, 
+  FaLaptopCode, 
+  FaRocket, 
+  FaMagic 
+} from 'react-icons/fa';
 import './WorldMap.css';
 
 const WorldMap = ({ sections, onSectionClick, activeSection }) => {
@@ -81,35 +88,35 @@ const WorldMap = ({ sections, onSectionClick, activeSection }) => {
     {
       id: 'about',
       title: 'About Me',
-      icon: '👤',
+      icon: <FaUser />,
       color: '#6a11cb',
       position: { x: 30, y: 30 }
     },
     {
       id: 'ai-expertise',
       title: 'AI Expertise',
-      icon: '🤖',
+      icon: <FaRobot />,
       color: '#2575fc',
       position: { x: 70, y: 30 }
     },
     {
       id: 'technical-skills',
       title: 'Technical Skills',
-      icon: '💻',
+      icon: <FaLaptopCode />,
       color: '#17a2b8',
       position: { x: 45, y: 60 }
     },
     {
       id: 'development',
       title: 'Development',
-      icon: '🚀',
+      icon: <FaRocket />,
       color: '#ff7e5f',
       position: { x: 25, y: 75 }
     },
     {
       id: 'projects',
       title: 'Projects',
-      icon: '🔮',
+      icon: <FaMagic />,
       color: '#9147ff',
       position: { x: 75, y: 70 }
     }

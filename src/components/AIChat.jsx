@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { 
+  FaHatWizard, 
+  FaRocket, 
+  FaRobot, 
+  FaGamepad, 
+  FaBrain,
+  FaSearch,
+  FaDice
+} from 'react-icons/fa';
 import './AIChat.css';
 
 const QUEST_TYPES = [
@@ -8,7 +17,7 @@ const QUEST_TYPES = [
     id: 'fantasy',
     name: 'Fantasy Adventure',
     description: 'Embark on a magical journey through enchanted realms',
-    icon: '🧙‍♂️',
+    icon: <FaHatWizard />,
     prompt: `You are a fantasy adventure game master. Create an immersive fantasy world with magic, mythical creatures, and epic quests. Incorporate coding and technology concepts as magical elements.
     
     IMPORTANT: Always provide exactly 3 numbered choices for the user to select from.
@@ -21,7 +30,7 @@ const QUEST_TYPES = [
     id: 'scifi',
     name: 'Sci-Fi Expedition',
     description: 'Explore the far reaches of space and futuristic technology',
-    icon: '🚀',
+    icon: <FaRocket />,
     prompt: `You are an AI guide for a sci-fi adventure. Create a futuristic world with advanced technology, space exploration, and AI. Frame programming concepts as futuristic technology.
     
     IMPORTANT: Always provide exactly 3 numbered choices for the user to select from.
@@ -34,7 +43,7 @@ const QUEST_TYPES = [
     id: 'cyberpunk',
     name: 'Cyberpunk Mission',
     description: 'Navigate a high-tech dystopian world of hackers and corporations',
-    icon: '🤖',
+    icon: <FaRobot />,
     prompt: `You are a guide in a cyberpunk world. Create a story in a dystopian future with advanced technology, mega-corporations, and digital rebels. Present coding as hacking and digital infiltration.
     
     IMPORTANT: Always provide exactly 3 numbered choices for the user to select from.
@@ -47,7 +56,7 @@ const QUEST_TYPES = [
     id: 'mystery',
     name: 'Digital Detective',
     description: 'Solve a complex mystery using your coding and logic skills',
-    icon: '🔍',
+    icon: <FaSearch />,
     prompt: `You are a mystery game master. Create an intriguing detective story with clues, suspects, and puzzles. Present programming concepts as tools for solving the mystery.
     
     IMPORTANT: Always provide exactly 3 numbered choices for the user to select from.
@@ -73,7 +82,7 @@ const AIChat = ({ onSendMessage, accentColor }) => {
     setMessages([
       {
         role: 'assistant',
-        content: `# Welcome to AI Quest! 🎮\n\nChoose your adventure type or let me generate a random quest for you:`
+        content: `# Welcome to AI Quest! \n\nChoose your adventure type or let me generate a random quest for you:`
       }
     ]);
   }, []);
@@ -329,7 +338,7 @@ const AIChat = ({ onSendMessage, accentColor }) => {
             <div className="message-content">
               {message.role === 'assistant' && (
                 <div className="assistant-icon" style={{ backgroundColor: accentColor }}>
-                  {selectedQuest ? selectedQuest.icon : '🧠'}
+                  {selectedQuest ? selectedQuest.icon : <FaBrain />}
                 </div>
               )}
               <div className="message-text">
@@ -351,7 +360,7 @@ const AIChat = ({ onSendMessage, accentColor }) => {
           <div className="message assistant streaming">
             <div className="message-content">
               <div className="assistant-icon" style={{ backgroundColor: accentColor }}>
-                {selectedQuest ? selectedQuest.icon : '🧠'}
+                {selectedQuest ? selectedQuest.icon : <FaBrain />}
               </div>
               <div className="message-text">
                 <ReactMarkdown>{streamingMessage}</ReactMarkdown>
@@ -365,7 +374,7 @@ const AIChat = ({ onSendMessage, accentColor }) => {
           <div className="message assistant">
             <div className="message-content">
               <div className="assistant-icon" style={{ backgroundColor: accentColor }}>
-                {selectedQuest ? selectedQuest.icon : '🧠'}
+                {selectedQuest ? selectedQuest.icon : <FaBrain />}
               </div>
               <div className="typing-indicator">
                 <span></span>

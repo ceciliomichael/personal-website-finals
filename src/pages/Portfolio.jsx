@@ -10,6 +10,26 @@ import AchievementNotification from '../components/AchievementNotification';
 import './Portfolio.css';
 import { useUser } from '../context/UserContext';
 import { useDialog } from '../context/DialogContext';
+import { 
+  FaUser, 
+  FaRobot, 
+  FaLaptopCode, 
+  FaRocket, 
+  FaMagic, 
+  FaGamepad, 
+  FaMicrophone, 
+  FaTheaterMasks, 
+  FaBullseye, 
+  FaImages, 
+  FaComments, 
+  FaMicrophoneAlt, 
+  FaBrain, 
+  FaTrophy, 
+  FaCompass, 
+  FaEdit, 
+  FaStar,
+  FaBook
+} from 'react-icons/fa';
 
 import profile from '../assets/images/profile/me.jpg';
 import gallery1 from '../assets/images/gallery/image1.png';
@@ -25,17 +45,17 @@ const sections = [
   {
     id: 'about',
     title: 'About Me',
-    icon: '👤',
+    icon: <FaUser />,
     color: '#6a11cb',
     position: { x: 20, y: 30 },
     content: {
       title: 'About Michael Cecilio',
-      description: `Michael Cecilio is an Aspiring AI Developer & AI Engineer specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.`,
+      description: `Michael Cecilio is an Aspiring AI Developer & AI Integration Specialist specializing in AI agent development and orchestration, with a focus on creating intelligent AI workflows, building custom AI agents, and implementing pre-built AI models into practical applications.`,
       details: [
         'AI Developer, Prompt Engineer & Tech Enthusiast',
         'GitHub: ceciliomichael | LinkedIn: ceciliomichael',
-        'Specializing in AI integration and development, with a focus on creating intelligent chatbot systems and implementing pre-built AI models into practical applications.',
-        'Aspiring AI Engineer with expertise in maximizing AI potential through advanced prompting techniques',
+        'Specializing in AI agent development and orchestration, with a focus on creating intelligent AI workflows and implementing pre-built AI models into practical applications.',
+        'AI Integration Specialist with expertise in maximizing AI potential through advanced prompting techniques and agent building',
         'Full-stack developer leveraging AI for efficient development workflows'
       ],
       image: profile
@@ -44,7 +64,7 @@ const sections = [
   {
     id: 'ai-expertise',
     title: 'AI Expertise',
-    icon: '🤖',
+    icon: <FaRobot />,
     color: '#2575fc',
     position: { x: 70, y: 20 },
     content: {
@@ -99,7 +119,7 @@ const sections = [
   {
     id: 'technical-skills',
     title: 'Technical Skills',
-    icon: '💻',
+    icon: <FaLaptopCode />,
     color: '#17a2b8',
     position: { x: 45, y: 60 },
     content: {
@@ -132,17 +152,16 @@ const sections = [
           skills: [
             { name: 'React', level: 90 },
             { name: 'Vue', level: 85 },
-            { name: 'Flutter', level: 82 }
+            { name: 'Flutter', level: 88 }
           ]
         },
         {
           name: 'AI & Integration',
           skills: [
             { name: 'AI Model Integration', level: 95 },
-            { name: 'Natural Language Processing', level: 90 },
-            { name: 'Chatbot Development', level: 92 },
+            { name: 'AI Agent Development', level: 95 },
             { name: 'Prompt Engineering', level: 95 },
-            { name: 'AI Optimization Techniques', level: 88 },
+            { name: 'AI Workflow Orchestration', level: 90 },
             { name: 'AI-Assisted Development', level: 90 }
           ]
         }
@@ -152,7 +171,7 @@ const sections = [
   {
     id: 'development',
     title: 'Development',
-    icon: '🚀',
+    icon: <FaRocket />,
     color: '#ff7e5f',
     position: { x: 25, y: 75 },
     content: {
@@ -201,7 +220,7 @@ const sections = [
   {
     id: 'projects',
     title: 'Projects',
-    icon: '🔮',
+    icon: <FaMagic />,
     color: '#9147ff',
     position: { x: 75, y: 70 },
     content: {
@@ -209,34 +228,10 @@ const sections = [
       description: 'A selection of my most notable projects, showcasing my skills in AI development, web and mobile applications.',
       projects: [
         {
-          title: 'Deepthinking AI Chat',
-          description: 'Advanced AI system with deep processing and evolutionary learning capabilities',
-          technologies: ['AI', 'NLP', 'Machine Learning', 'Web Development'],
-          link: '#'
-        },
-        {
-          title: 'AI-to-AI Communication Platform',
-          description: 'Platform enabling multiple AI agents to interact and communicate',
-          technologies: ['AI', 'NLP', 'Multi-agent Systems', 'Web Development'],
-          link: '#'
-        },
-        {
-          title: 'AIFriend',
-          description: 'Mobile application where AI can be your personal friend and companion, created with Flutter',
-          technologies: ['Flutter', 'AI', 'Mobile Development', 'UI/UX'],
-          link: '#'
-        },
-        {
-          title: 'AI-Powered Chat Application',
-          description: 'Implemented using prebuilt open-source models and advanced prompting techniques',
-          technologies: ['AI', 'JavaScript', 'NLP', 'API Integration'],
-          link: '#'
-        },
-        {
-          title: 'Web Chatbot Interface',
-          description: 'HTML-based chatbot with pre-built AI integration',
-          technologies: ['HTML', 'CSS', 'JavaScript', 'AI Integration'],
-          link: '#'
+          title: 'Deepthink AI Chat Platform',
+          description: 'Advanced AI chat agent with deep processing capabilities. A comprehensive platform for building and orchestrating intelligent AI agents with search functionality and AI-powered coding assistance.',
+          technologies: ['AI Agent', 'Search Integration', 'Code Generation', 'Web Development', 'Agent Orchestration'],
+          link: 'https://deepthink.echosphere.cfd'
         }
       ]
     }
@@ -244,7 +239,7 @@ const sections = [
   {
     id: 'hobbies',
     title: 'Hobbies',
-    icon: '🎮',
+    icon: <FaGamepad />,
     color: '#ffc107',
     position: { x: 60, y: 40 },
     content: {
@@ -254,22 +249,22 @@ const sections = [
         {
           name: 'AI Experimentation',
           description: 'Passionate about exploring and learning about artificial intelligence and its applications.',
-          icon: '🤖'
+          icon: <FaRobot />
         },
         {
           name: 'Reading Tech Blogs',
           description: 'Staying updated with the latest in technology and AI development.',
-          icon: '📚'
+          icon: <FaBook />
         },
         {
           name: 'Singing',
           description: 'Enjoy singing and performing vocal music in my free time.',
-          icon: '🎤'
+          icon: <FaMicrophoneAlt />
         },
         {
           name: 'Broadway & Musicals',
           description: 'Love listening to and experiencing Broadway shows and musical theater.',
-          icon: '🎭'
+          icon: <FaTheaterMasks />
         }
       ]
     }
@@ -277,7 +272,7 @@ const sections = [
   {
     id: 'goals',
     title: 'Goals',
-    icon: '🎯',
+    icon: <FaBullseye />,
     color: '#dc3545',
     position: { x: 30, y: 15 },
     content: {
@@ -325,7 +320,7 @@ const sections = [
   {
     id: 'gallery',
     title: 'Gallery',
-    icon: '🖼️',
+    icon: <FaImages />,
     color: '#6f42c1',
     position: { x: 85, y: 40 },
     content: {
@@ -362,7 +357,7 @@ const sections = [
   {
     id: 'feedback',
     title: 'Feedback',
-    icon: '💬',
+    icon: <FaComments />,
     color: '#20c997',
     position: { x: 50, y: 85 },
     content: {
@@ -374,7 +369,7 @@ const sections = [
   {
     id: 'lobby',
     title: 'Lobby',
-    icon: '🗣️',
+    icon: <FaMicrophoneAlt />,
     color: '#fd7e14',
     position: { x: 90, y: 15 },
     content: {
@@ -386,7 +381,7 @@ const sections = [
   {
     id: 'quest',
     title: 'AI Quest',
-    icon: '🧠',
+    icon: <FaBrain />,
     color: '#e83e8c',
     position: { x: 10, y: 50 },
     content: {
@@ -403,14 +398,14 @@ const achievements = [
     id: 'first_visit',
     title: 'First Steps',
     description: 'Visited the portfolio for the first time',
-    icon: '🏆',
+    icon: <FaTrophy />,
     unlocked: false
   },
   {
     id: 'explorer',
     title: 'Explorer',
     description: 'Visited at least 5 different sections',
-    icon: '🧭',
+    icon: <FaCompass />,
     unlocked: false,
     requiredVisits: 5
   },
@@ -418,7 +413,7 @@ const achievements = [
     id: 'curious_mind',
     title: 'Curious Mind',
     description: 'Spent more than 5 minutes exploring',
-    icon: '🧠',
+    icon: <FaBrain />,
     unlocked: false,
     timeRequired: 5 * 60 * 1000 // 5 minutes in milliseconds
   },
@@ -426,21 +421,21 @@ const achievements = [
     id: 'ai_friend',
     title: 'AI Friend',
     description: 'Had a conversation with the AI assistant',
-    icon: '🤖',
+    icon: <FaRobot />,
     unlocked: false
   },
   {
     id: 'feedback_giver',
     title: 'Feedback Giver',
     description: 'Submitted feedback',
-    icon: '📝',
+    icon: <FaEdit />,
     unlocked: false
   },
   {
     id: 'completionist',
     title: 'Completionist',
     description: 'Visited all sections of the portfolio',
-    icon: '🌟',
+    icon: <FaStar />,
     unlocked: false
   }
 ];

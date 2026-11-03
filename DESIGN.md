@@ -1,0 +1,30 @@
+# Design
+
+## Approved direction: ORBITAL (November 2026)
+
+The Next.js portfolio uses a modern, premium space-inspired visual identity. The user explicitly authorized a substantial redesign, superseding the earlier rule to duplicate the old React design. Keep the distinctive galactic exploration concept, but do not revert to the legacy game-menu appearance unless requested.
+
+## Visual system
+
+- **Atmosphere:** Deep midnight (#070911), ink-blue surfaces (#101523), soft lavender accents (#b9b5ff), cool silver text (#e8e9f4), quiet mint signals (#b9ffb5).
+- **Typography:** Space Grotesk display, DM Sans body, JetBrains Mono for navigational labels and mission metadata.
+- **Structure:** First-time visitors choose a display name before the cinematic zoom through the nebula. Returning visitors with a stored anonymous session skip the name prompt, but still see the nebula journey. There is no separate landing page.
+- **Journey:** Warp-speed stars and passing orbital rings travel through a seamless, full-bleed, continuously drifting purple/blue/pink nebula gradient. Avoid boxed, finite, or circular cloud panels. Fade the flight away at the end so the visitor feels they have arrived in the same space. Honor reduced-motion preferences with a short static transition.
+- **Details:** Subtle starfield and grid, generous spacing, soft glass surfaces, thin borders, animated space effects, and responsive controls.
+- **Gallery/profile:** Preserve the original user's gallery files and profile photo inside constellation section dialogs. Do not invent additional personal content or project results.
+- **Interactive mode:** Original constellation coordinates and category data, modern node treatments, direct node selection without a star-chart sidebar, mobile vertical constellation list, modest wheel increments, eased buttons, and drag momentum.
+- **Galaxy atmosphere:** Nodes preserve their original individual section-color gradients, tinted borders, and glows. Connecting paths transition between section colors. The nebula backdrop should be visibly violet, blue, rose, and cyan without overwhelming labels. Background stars must be scattered independently rather than forming diagonal dotted lines.
+- **Node labels:** Labels must remain stationary when hovered or keyboard-focused. Opacity can change, but do not translate their positions.
+- **Section archives (implemented):** All 10 section modals use a restrained, color-aware shell with distinct layouts. About has a square (1:1) portrait. AI Expertise and Development have a precisely aligned milestone trail. Skills have a capability dashboard. Projects, Hobbies, Goals, and Gallery have focused content layouts, with native-aspect gallery images. Feedback is a live public guestbook, and Lobby is a live shared chat. Preserve Escape, backdrop, and footer Back-button dismissal, focus management, mobile scrolling, and smooth zoom reset.
+- **Current skills presentation:** Show named technologies grouped by frontend/full stack, backend, data, AI APIs, agentic AI, and mobile/tools. Do not invent numeric proficiency ratings for the user's newer skills. Development includes a distinct AI API & Agentic Integrations entry and a language-neutral Backend Development entry.
+- **Latest simplification:** Avoid overdecorating modals. Remove unnecessary decorative headers, illustration placeholders, and oversized empty cards. Timeline dots must sit precisely on the line on desktop and mobile. Gallery image frames follow each photo's native aspect ratio and content size, without cropping or excess blank space. The About photo remains square. There is no X button: the footer's “Back to the stars” button is the main close control, with Escape/backdrop dismissal retained.
+- **Input focus:** Never use the default browser-blue input outline. Inputs should have no default outline, but retain a visible, accessible soft lavender border/halo on keyboard focus.
+- **Profile:** The galaxy header offers Profile instead of Change name. Profile is a dedicated full-screen view, not a modal. The large display name is an editable text field in place, with a pencil indicator, placeholder when cleared, and an adjacent accessible icon-only save button; no separate name-edit card or explanatory paragraph. Show the visitor's `#number`, section visit and achievement progress, subtle celebratory styling, and unlocked/undiscovered achievements. Changes retain the same identity and progress.
+- **Community:** Feedback shows public posts with immediate updates, one post per account and three edits maximum; the composer and feed share the existing modal rather than adding decorative floating cards. Lobby chat remains flush inside the existing modal content with the message composer anchored below a scrolling list. Its header shows a live **Online** count in place of the message-retention badge, and no visible copy discusses the 20-message limit. In both public feeds, display authors as `Name#number` and show the visitor's `Name#number` on their composer identity label. Keep the galaxy greeting and editable profile display name free of this suffix. Updates are pushed with SSE without user refresh.
+- **Accessibility:** Text labels on icons, keyboard-dismissable dialogs with focus management, reduced-motion rules, appropriate semantic sections, and legible contrast.
+
+## Implementation
+
+Tailwind CSS v4 handles layout, spacing, component appearance, responsive behavior, and hover/focus styles. `src/app/globals.css` defines shared theme tokens and input focus. `src/styles/animations.css` contains the starfield, nebula flight, backdrop, and map visual effects that are clearer in dedicated CSS.
+
+The feedback guestbook and lobby are connected to PostgreSQL with live Server-Sent Events. The Lobby interface fills the modal's content region edge-to-edge, without a floating card or nested connection sidebar. The AI Quest node and preview remain removed. Browser-level interaction verification is separate from build/lint checks.

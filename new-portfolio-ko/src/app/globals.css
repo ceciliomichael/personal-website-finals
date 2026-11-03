@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+@theme inline {
+  --color-space: #070911;
+  --color-surface: #101523;
+  --color-orbit: #b9b5ff;
+  --color-mist: #e8e9f4;
+  --color-muted: #929db2;
+  --color-lime: #b9ffb5;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "DM Sans", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: #070911;
+  color: #e8e9f4;
+  font-family: "DM Sans", Arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(185, 181, 255, 0.3);
+  color: #fff;
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid #d5d2ff;
+  outline-offset: 4px;
+}
+
+input,
+textarea,
+select {
+  outline: none;
+  box-shadow: none;
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: rgba(185, 181, 255, 0.65);
+  box-shadow: 0 0 0 3px rgba(185, 181, 255, 0.12);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #343c5e #0a0d17;
+}
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0d17;
+}
+::-webkit-scrollbar-thumb {
+  background: #353e60;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}

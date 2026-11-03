@@ -3,7 +3,9 @@
 ## Workspace
 
 - `new-portfolio-ko/`: the only active portfolio app. Next.js 16 App Router, TypeScript, Tailwind CSS v4, Framer Motion, Lucide, React Icons, react-zoom-pan-pinch, and PostgreSQL.
-- Root `docker-compose.yml`: local PostgreSQL 17 with persistent Docker volume and a localhost-only port.
+- Root `docker-compose.yml`: production-capable stack with PostgreSQL 17 (persistent volume, localhost-only DB port), an automatic one-shot SQL migration service, and a health-checked Next.js app.
+- `new-portfolio-ko/Dockerfile`: multi-stage Node.js 22 Alpine build producing the Next.js standalone server, running as a non-root user; `.dockerignore` excludes local files and secrets.
+- `new-portfolio-ko/src/app/api/health/route.ts`: health endpoint that verifies the application can query PostgreSQL, used by the container healthcheck.
 
 ## Implemented UI architecture
 
@@ -38,5 +40,7 @@ Backend code: `src/lib/{db,visitors,visitor-client,community,community-client,fe
 The Lobby's **Online** badge counts distinct named visitor profiles active within the last 60 seconds, across all pages of the site. The app sends an authenticated heartbeat every 15 seconds while visible. `src/lib/presence.ts`, `src/app/api/presence/route.ts`, and `db/003_presence.sql` implement the count and expiring presence records. PostgreSQL notifications broadcast joins and expirations; the lobby also refreshes its count every 15 seconds so departures appear after expiry. Welcome-screen visitors without a saved profile are not counted. Lobby storage still caps at 20 messages, but the UI does not advertise this cap.
 
 ## Running
+
+Production Docker deployment: configure root `.env` based on `.env.example`, then run `docker compose up -d --build --wait` from the workspace root. The app listens on `APP_PORT` (default 3000); the database is accessed internally as `postgres:5432`. The migration container applies versioned SQL scripts before the app starts, and Next.js runs in standalone production mode. Deploy behind an HTTPS reverse proxy that supports long-lived SSE connections and does not buffer event streams. See `new-portfolio-ko/README.md`.
 
 From the repository root, configure `.env` and `new-portfolio-ko/.env.local`, then run `docker compose up -d --wait postgres`. In `new-portfolio-ko`, run `npm install`, `npm run db:migrate`, then `npm run dev`. Run `npm run lint`, `npm run build`, `npm run test:visitors`, `npm run test:presence`, and `npm run test:community` (the community test requires an empty local lobby) to verify. See `new-portfolio-ko/README.md`.

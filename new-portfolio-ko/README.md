@@ -2,6 +2,33 @@
 
 This is the active Next.js portfolio. Visitors enter a name once, travel through the nebula animation, and explore the galaxy. Subsequent visits in the same browser restore the saved visitor profile and start directly with the nebula journey.
 
+## Deploy the complete application with Docker
+
+From the repository root (the directory containing `docker-compose.yml`):
+
+1. Copy `.env.example` to `.env` and set a long, random, **URL-safe** `POSTGRES_PASSWORD` (letters and numbers work). Adjust `APP_PORT` if port 3000 is already occupied, and optionally set `APP_BIND_ADDRESS=127.0.0.1` when using a reverse proxy on the same host.
+2. Build and start the complete stack:
+
+   ```sh
+   docker compose up -d --build --wait
+   ```
+
+3. Open `http://localhost:3000` (or the configured port). Check services and database-backed readiness:
+
+   ```sh
+   docker compose ps
+   docker compose logs -f app
+   curl http://localhost:3000/api/health
+   ```
+
+The `postgres` container keeps visitor profiles, feedback, and chat in the persistent `orbital_postgres_data` volume. The one-shot `migrate` service waits for a healthy database, applies `db/001_visitors.sql`, `db/002_feedback_lobby.sql`, and `db/003_presence.sql`, then exits successfully before `app` starts. Migration errors prevent the app from starting. The `app` image builds Next.js once and runs its standalone production server as a non-root user; it checks `/api/health` to monitor database connectivity.
+
+For subsequent deployments, run `docker compose up -d --build --wait`. When adding new SQL migration files to the existing deployment, explicitly run `docker compose run --rm migrate` before restarting the app to ensure that the scripts are applied.
+
+For a public domain, route HTTPS traffic from your reverse proxy or tunnel to the configured app port. Enable streaming and disable response buffering for `/api/events` so live feedback, Lobby messages, and Online counts continue updating. The database port is only published on localhost for administration and local development. Do not publish PostgreSQL to the internet, and do not commit the root `.env` file or local `.env.local`.
+
+To stop without losing data, run `docker compose down`. Do not run `docker compose down -v` unless you intentionally want to destroy the PostgreSQL volume.
+
 ## Requirements
 
 - Node.js 22+ and npm

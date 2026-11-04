@@ -41,5 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# data
-data/
+# Local root-level data only. Source-controlled portfolio content lives in src/data/.
+/data/

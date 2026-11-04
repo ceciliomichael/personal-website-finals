@@ -455,97 +455,33 @@
 .nebula-journey-sky {
   background:
     radial-gradient(
-      ellipse at 24% 38%,
+      ellipse 85% 80% at 24% 38%,
       rgba(106, 58, 193, 0.75),
-      transparent 62%
+      transparent 75%
     ),
     radial-gradient(
-      ellipse at 78% 67%,
-      rgba(33, 128, 193, 0.65),
-      transparent 61%
+      ellipse 78% 78% at 78% 67%,
+      rgba(33, 128, 193, 0.6),
+      transparent 76%
     ),
     radial-gradient(
-      ellipse at 55% 72%,
-      rgba(178, 65, 152, 0.45),
-      transparent 58%
+      ellipse 72% 70% at 55% 72%,
+      rgba(178, 65, 152, 0.46),
+      transparent 76%
     ),
     linear-gradient(130deg, #141432, #253a72 52%, #1b153b);
-  background-size: 150% 150%;
-  animation: nebula-sky-drift 12s ease-in-out infinite alternate;
-}
-
-.nebula-journey-cloud {
-  position: absolute;
-  inset: -35vmax;
-  pointer-events: none;
-  filter: blur(35px);
-  opacity: 0.75;
-  animation: nebula-cloud-flow 8s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-.nebula-journey-cloud--violet {
-  background:
-    radial-gradient(
-      ellipse 34% 32% at 40% 44%,
-      rgba(202, 107, 255, 0.88),
-      rgba(117, 58, 207, 0.42) 48%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 31% 29% at 73% 63%,
-      rgba(121, 86, 235, 0.65),
-      transparent 100%
-    );
-}
-
-.nebula-journey-cloud--blue {
-  background:
-    radial-gradient(
-      ellipse 39% 35% at 63% 43%,
-      rgba(81, 193, 244, 0.8),
-      rgba(65, 88, 219, 0.38) 49%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 28% 36% at 27% 68%,
-      rgba(42, 106, 216, 0.62),
-      transparent 100%
-    );
-  animation-delay: -3s;
-  animation-direction: alternate-reverse;
-}
-
-.nebula-journey-cloud--rose {
-  background:
-    radial-gradient(
-      ellipse 33% 32% at 47% 62%,
-      rgba(251, 116, 178, 0.75),
-      rgba(163, 60, 153, 0.34) 51%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 35% 25% at 77% 29%,
-      rgba(197, 63, 155, 0.6),
-      transparent 100%
-    );
-  animation-delay: -5s;
 }
 
 .nebula-journey-portal {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 24vmin;
-  height: 24vmin;
-  border: 1px solid rgba(238, 222, 255, 0.5);
+  width: min(24vmin, 220px);
+  height: min(24vmin, 220px);
+  border: 1px solid rgba(238, 222, 255, 0.55);
   border-radius: 50%;
-  box-shadow:
-    0 0 35px rgba(166, 138, 255, 0.28),
-    inset 0 0 40px rgba(199, 162, 255, 0.23);
   opacity: 0;
-  animation: nebula-portal-pass 2.5s ease-in both;
-  will-change: transform, opacity;
+  animation: nebula-portal-pass 2.8s ease-in both;
 }
 
 .nebula-journey-portal--first {
@@ -553,11 +489,7 @@
 }
 
 .nebula-journey-portal--second {
-  animation-delay: 1.02s;
-}
-
-.nebula-journey-portal--third {
-  animation-delay: 1.9s;
+  animation-delay: 1.5s;
 }
 
 .nebula-journey-stars {
@@ -574,13 +506,11 @@
   height: 2px;
   border-radius: 999px;
   background: var(--flight-color);
-  box-shadow: 0 0 10px var(--flight-color);
   rotate: var(--flight-angle);
   opacity: 0;
   pointer-events: none;
   animation: nebula-star-rush var(--flight-duration) ease-in var(--flight-delay)
     infinite;
-  will-change: transform, opacity;
 }
 
 .nebula-journey-star::after {
@@ -588,7 +518,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 45px;
+  width: 28px;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, transparent, var(--flight-color));
@@ -613,12 +543,11 @@
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  filter: drop-shadow(0 0 20px rgba(222, 225, 255, 0.4));
 }
 
 .nebula-warp-halo {
   position: absolute;
-  inset: -45%;
+  inset: -25%;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -627,35 +556,15 @@
     rgba(185, 162, 255, 0.15) 32%,
     transparent 65%
   );
-  animation: nebula-warp-breathe 2.1s ease-in-out infinite alternate;
 }
 
 .nebula-warp-ring {
   position: absolute;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 16deg,
-    rgba(255, 255, 255, 0.96) 20deg,
-    transparent 29deg 94deg,
-    rgba(236, 244, 255, 0.8) 99deg,
-    transparent 109deg 200deg,
-    rgba(255, 255, 255, 0.95) 205deg,
-    transparent 215deg 292deg,
-    rgba(220, 232, 255, 0.7) 297deg,
-    transparent 309deg 360deg
-  );
-  -webkit-mask: radial-gradient(
-    farthest-side,
-    transparent calc(100% - 2px),
-    #000 calc(100% - 1px)
-  );
-  mask: radial-gradient(
-    farthest-side,
-    transparent calc(100% - 2px),
-    #000 calc(100% - 1px)
-  );
-  filter: drop-shadow(0 0 8px white);
+  border: 2px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.96);
+  border-right-color: rgba(226, 235, 255, 0.65);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
   animation: nebula-warp-spin 3.6s linear infinite;
 }
 
@@ -720,24 +629,15 @@
 }
 
 .nebula-journey-progress {
-  width: 0;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
   animation: nebula-progress 4.35s linear both;
 }
 
 @keyframes nebula-warp-spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes nebula-warp-breathe {
-  from {
-    opacity: 0.7;
-    transform: scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.12);
   }
 }
 
@@ -752,24 +652,6 @@
   }
 }
 
-@keyframes nebula-sky-drift {
-  from {
-    background-position: 8% 16%;
-  }
-  to {
-    background-position: 86% 78%;
-  }
-}
-
-@keyframes nebula-cloud-flow {
-  from {
-    transform: translate3d(-3%, 2%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(4%, -3%, 0) scale(1.18);
-  }
-}
-
 @keyframes nebula-portal-pass {
   0% {
     opacity: 0;
@@ -780,7 +662,7 @@
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(11);
+    transform: translate(-50%, -50%) scale(5);
   }
 }
 
@@ -803,31 +685,41 @@
 
 @keyframes nebula-progress {
   from {
-    width: 0;
+    transform: scaleX(0);
   }
   to {
-    width: 100%;
+    transform: scaleX(1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nebula-journey-sky,
-  .nebula-journey-cloud,
   .nebula-journey-portal,
   .nebula-journey-star,
   .nebula-journey-progress,
-  .nebula-warp-halo,
   .nebula-warp-ring,
   .nebula-warp-core {
     animation: none;
   }
 }
 
-@media (max-width: 639px) {
-  .nebula-journey-star:nth-child(n + 56) {
+@media (max-width: 767px) {
+  .nebula-journey-star:nth-child(n + 23),
+  .nebula-journey-portal,
+  .nebula-warp-ring--inner {
     display: none;
   }
   .nebula-warp-system {
     top: 43%;
+  }
+  .nebula-warp-core {
+    box-shadow:
+      0 0 14px 4px rgba(255, 255, 255, 0.75),
+      0 0 40px 12px rgba(210, 218, 255, 0.32);
+  }
+}
+
+@media (max-width: 359px) {
+  .nebula-journey-star:nth-child(n + 17) {
+    display: none;
   }
 }

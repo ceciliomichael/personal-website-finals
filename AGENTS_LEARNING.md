@@ -7,6 +7,7 @@
 - Prefer Tailwind CSS v4 for layout/component styling; use custom CSS only for special animation and spatial visual effects.
 - Organize existing portfolio content and images separately from UI code; do not overwrite the original Vite/React project.
 - Keep mouse-wheel zoom increments small and consistent. Wheel zoom should not multiply by delta magnitude; keep smooth button transitions and natural drag inertia.
+- Optimize the ORBITAL / IN TRANSIT animation for mobile and weak devices. Keep the white orbital centerpiece and cinematic feel, but avoid oversized moving blurred nebula surfaces, per-frame gradient repainting, excessive star layers, and expensive moving glow filters. Reduce effects on narrow screens and preserve reduced-motion support.
 - Keep all constellation node titles stationary on hover/focus. For modal content, prefer distinct, carefully layered layouts with shape variation and gentle color blending across the remaining 10 sections, not repetitive rectangular cards. The AI Quest node was explicitly removed.
 - The user prefers restraint over excessive decoration in the modals; keep activity timeline dots aligned with the rail, fit gallery image frames to native image proportions, and use the modal footer Back button rather than an additional X button.
 - The active persistence choice is now PostgreSQL with root-level Docker Compose. WebSockets remain potential future work; do not misrepresent feedback or lobby previews as connected.

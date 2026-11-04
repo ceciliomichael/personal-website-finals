@@ -15,7 +15,9 @@ function random(seed: number) {
   return ((hash ^ (hash >>> 16)) >>> 0) / 4294967296;
 }
 
-const flightStars = Array.from({ length: 86 }, (_, id) => {
+// Distribute a modest number of streaks across the flight path.
+// CSS disables most of these on small screens, without starting their animations.
+const flightStars = Array.from({ length: 48 }, (_, id) => {
   const angle = id * 2.399963229728653;
   const distance = 75 + random(id + 126) * 60;
 
@@ -64,12 +66,8 @@ export function NebulaJourney({ visitorName, onComplete }: NebulaJourneyProps) {
       }}
     >
       <div className="nebula-journey-sky absolute inset-0" aria-hidden="true">
-        <div className="nebula-journey-cloud nebula-journey-cloud--violet" />
-        <div className="nebula-journey-cloud nebula-journey-cloud--blue" />
-        <div className="nebula-journey-cloud nebula-journey-cloud--rose" />
         <div className="nebula-journey-portal nebula-journey-portal--first" />
         <div className="nebula-journey-portal nebula-journey-portal--second" />
-        <div className="nebula-journey-portal nebula-journey-portal--third" />
         <div className="nebula-journey-stars">
           {flightStars.map((star) => (
             <span
@@ -101,7 +99,7 @@ export function NebulaJourney({ visitorName, onComplete }: NebulaJourneyProps) {
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 top-[9%] flex justify-center">
-        <div className="flex items-center gap-2 rounded-full border border-white/15 bg-[#090e25a8] px-4 py-2 font-mono text-[10px] tracking-[.18em] text-[#dad9ff] backdrop-blur-lg">
+        <div className="flex items-center gap-2 rounded-full border border-white/15 bg-[#11132fef] px-4 py-2 font-mono text-[10px] tracking-[.18em] text-[#dad9ff]">
           <Orbit size={14} className="text-orbit" aria-hidden="true" />
           ORBITAL / IN TRANSIT
         </div>

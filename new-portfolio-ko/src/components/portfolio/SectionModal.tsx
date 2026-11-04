@@ -67,29 +67,37 @@ export function SectionModal({
   onClose,
 }: SectionModalProps) {
   const Icon = section.icon;
-  const backRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const sectionIndex = sections.findIndex((entry) => entry.id === section.id);
   const sectionNumber = String(sectionIndex + 1).padStart(2, "0");
   const sectionTotal = String(sections.length).padStart(2, "0");
 
   useEffect(() => {
+    const openerId = window.matchMedia("(min-width: 1024px)").matches
+      ? `section-${section.id}`
+      : `mobile-section-${section.id}`;
     const previousFocus =
-      document.activeElement instanceof HTMLElement
+      document.activeElement instanceof HTMLElement &&
+      document.activeElement !== document.body
         ? document.activeElement
-        : null;
+        : document.getElementById(openerId);
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
-    backRef.current?.focus({ preventScroll: true });
+    // Focus the dialog itself, not the footer action: Space on a focused
+    // button activates it and would immediately close the archive.
+    dialogRef.current?.focus({ preventScroll: true });
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
       }
 
       if (event.key === "Tab") {
-        const dialog = backRef.current?.closest('[role="dialog"]');
+        const dialog = dialogRef.current;
         if (!dialog) return;
 
         const focusable = Array.from(
@@ -100,10 +108,18 @@ export function SectionModal({
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
 
-        if (event.shiftKey && document.activeElement === first) {
+        if (
+          event.shiftKey &&
+          (document.activeElement === first ||
+            document.activeElement === dialog)
+        ) {
           event.preventDefault();
           last?.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
+        } else if (
+          !event.shiftKey &&
+          (document.activeElement === last ||
+            (document.activeElement === dialog && first))
+        ) {
           event.preventDefault();
           first?.focus();
         }
@@ -116,7 +132,7 @@ export function SectionModal({
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus();
     };
-  }, [onClose]);
+  }, [section.id]);
 
   const accentStyle = {
     "--archive-color": section.color,
@@ -135,7 +151,9 @@ export function SectionModal({
       }}
     >
       <motion.div
+        ref={dialogRef}
         role="dialog"
+        tabIndex={-1}
         aria-modal="true"
         aria-labelledby="section-dialog-title"
         aria-describedby="section-dialog-description"
@@ -208,7 +226,6 @@ export function SectionModal({
 
           <footer className="flex shrink-0 items-center justify-end border-t border-white/10 px-5 py-4 sm:px-7 lg:px-8">
             <button
-              ref={backRef}
               type="button"
               onClick={onClose}
               className="archive-return inline-flex min-h-9 items-center gap-2 rounded-lg px-2 font-display text-[12px] font-medium"

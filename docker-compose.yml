@@ -40,6 +40,8 @@ services:
     build:
       context: ./new-portfolio-ko
       dockerfile: Dockerfile
+    labels:
+      - "routegate.public=true"
     restart: unless-stopped
     depends_on:
       migrate:

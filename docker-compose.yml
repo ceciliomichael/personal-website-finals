@@ -64,3 +64,5 @@ services:
 
 volumes:
   orbital_postgres_data:
+    # Keep PostgreSQL data independent of RouteGate's per-deployment project IDs.
+    name: ${POSTGRES_VOLUME_NAME:-portfolio-port_orbital_postgres_data}

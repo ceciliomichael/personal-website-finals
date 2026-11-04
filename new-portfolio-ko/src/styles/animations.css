@@ -184,6 +184,10 @@
     0 35px 125px rgba(0, 0, 0, 0.7),
     0 0 68px color-mix(in srgb, var(--archive-color) 11%, transparent);
 }
+.archive-shell:focus-visible {
+  /* The dialog receives initial focus, but only interactive controls need a ring. */
+  outline: none;
+}
 .archive-shell-glow {
   background:
     radial-gradient(

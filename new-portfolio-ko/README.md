@@ -21,7 +21,7 @@ From the repository root (the directory containing `docker-compose.yml`):
    curl http://localhost:3000/api/health
    ```
 
-The `postgres` container keeps visitor profiles, feedback, and chat in the persistent `orbital_postgres_data` volume. The one-shot `migrate` service waits for a healthy database, applies `db/001_visitors.sql`, `db/002_feedback_lobby.sql`, and `db/003_presence.sql`, then exits successfully before `app` starts. Migration errors prevent the app from starting. The `app` image builds Next.js once and runs its standalone production server as a non-root user; it checks `/api/health` to monitor database connectivity.
+The `postgres` container keeps visitor profiles, feedback, and chat in the persistent `orbital_postgres_data` named volume. The one-shot `migrate` service builds `Dockerfile.migrate` with SQL files bundled into the image (no host bind mounts, compatible with RouteGate's Compose restrictions), waits for a healthy database, applies `db/001_visitors.sql`, `db/002_feedback_lobby.sql`, and `db/003_presence.sql`, then exits successfully before `app` starts. Migration errors prevent the app from starting. The `app` image builds Next.js once and runs its standalone production server as a non-root user; it checks `/api/health` to monitor database connectivity.
 
 For subsequent deployments, run `docker compose up -d --build --wait`. When adding new SQL migration files to the existing deployment, explicitly run `docker compose run --rm migrate` before restarting the app to ensure that the scripts are applied.
 

@@ -1,0 +1,3 @@
+# Bundle SQL migrations so deployers do not need host bind mounts.
+FROM postgres:17-alpine
+COPY db/ /migrations/

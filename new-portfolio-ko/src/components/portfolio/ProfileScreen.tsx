@@ -212,7 +212,13 @@ export function ProfileScreen({
                         type="button"
                         aria-label="Edit display name"
                         title="Edit display name"
-                        onClick={() => setEditing(true)}
+                        onClick={(event) => {
+                          // The button changes into a submit button when
+                          // editing starts. Prevent the original click from
+                          // submitting the form during that DOM update.
+                          event.preventDefault();
+                          setEditing(true);
+                        }}
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#b9b5ff] transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-[#c6c0ff]"
                       >
                         <Pencil size={19} aria-hidden="true" />

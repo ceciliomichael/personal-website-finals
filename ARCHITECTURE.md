@@ -3,8 +3,9 @@
 ## Workspace
 
 - `new-portfolio-ko/`: the only active portfolio app. Next.js 16 App Router, TypeScript, Tailwind CSS v4, Framer Motion, Lucide, React Icons, react-zoom-pan-pinch, and PostgreSQL.
-- Root `docker-compose.yml`: production-capable stack with PostgreSQL 17 (persistent volume, localhost-only DB port), an automatic one-shot SQL migration service, and a health-checked Next.js app.
+- Root `docker-compose.yml`: production-capable stack with PostgreSQL 17 (persistent named volume, localhost-only DB port), an automatic one-shot SQL migration service with no host bind mounts, and a health-checked Next.js app.
 - `new-portfolio-ko/Dockerfile`: multi-stage Node.js 22 Alpine build producing the Next.js standalone server, running as a non-root user; `.dockerignore` excludes local files and secrets.
+- `new-portfolio-ko/Dockerfile.migrate`: PostgreSQL client image with bundled SQL migrations for managed Compose deployment hosts such as RouteGate that disallow source-directory bind mounts.
 - `new-portfolio-ko/src/app/api/health/route.ts`: health endpoint that verifies the application can query PostgreSQL, used by the container healthcheck.
 
 ## Implemented UI architecture

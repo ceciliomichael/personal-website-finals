@@ -17,7 +17,9 @@ services:
       retries: 12
 
   migrate:
-    image: postgres:17-alpine
+    build:
+      context: ./new-portfolio-ko
+      dockerfile: Dockerfile.migrate
     restart: "no"
     depends_on:
       postgres:
@@ -26,8 +28,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-orbital}
       POSTGRES_DB: ${POSTGRES_DB:-orbital_portfolio}
       PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
-    volumes:
-      - ./new-portfolio-ko/db:/migrations:ro
     entrypoint: ["/bin/sh", "-ec"]
     command:
       - |

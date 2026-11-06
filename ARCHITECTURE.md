@@ -17,13 +17,18 @@
 - `src/components/portfolio/SpaceBackdrop.tsx`: deterministic starfield/aurora backdrop.
 - `src/components/portfolio/WelcomeScreen.tsx`: first-visit name entry and visitor profile creation, without passwords.
 - `src/components/portfolio/NebulaJourney.tsx`: timed full-screen flight, moving stars, expanding nebula, progress/status, reduced-motion support.
-- `src/components/portfolio/PortfolioExperience.tsx`: restores a saved visitor session, controls welcome → journey → galaxy and the full-screen profile, tracks persisted achievements, and manages section selection.
+- `src/components/portfolio/PortfolioExperience.tsx`: restores a saved visitor session, controls welcome → journey → galaxy and the full-screen profile, tracks persisted achievements, and opens the photobooth as a large overlay while leaving the galaxy mounted.
 - `src/components/portfolio/ExploreGalaxy.tsx`: constellation explorer, Profile button, direct node selection, gentle wheel zoom, animated zoom controls, and smooth zoom reset on dialog close.
 - `src/components/portfolio/ProfileScreen.tsx`: full-screen visitor profile with public-to-owner `#number`, icon-only name save, discovery stats, and unlocked/locked achievement milestones.
 - `src/components/portfolio/ConstellationMap.tsx`: coordinates, paths, nodes, mobile vertical track and atmospheric stars.
 - `src/components/portfolio/SectionModal.tsx`: accessible color-aware modal shell, editorial rail, shared dismiss/focus handling, and section routing.
 - `src/components/portfolio/SectionModalNarratives.tsx`: About portrait/profile mosaic, AI Expertise and Development timelines, and the Skills capability dashboard.
 - `src/components/portfolio/SectionModalShowcases.tsx`: Projects, Hobbies, Goals, and Gallery editorial compositions.
+- `src/components/portfolio/PhotoboothModal.tsx`: responsive photo studio modal (up to 1120px wide × 94dvh on desktop, viewport-sized mobile), compact header, keyboard focus trap/restoration, Escape/backdrop dismissal, background scroll lock, and naturally scrollable content.
+- `src/components/portfolio/PhotoboothStudio.tsx`: camera auto-start, cancelable timer and 1–4-shot capture, upload fallback, compact capture thumbnails, and a separate print-first editing stage. The print preview has a consistent minimum panel height across 1×4 and 2×2; photos can be selected, retaken, removed, or reordered. Camera tracks are released while editing or off-page.
+- `src/components/portfolio/PhotoboothPrintPreview.tsx`: responsive centered paper preview with selectable 4:3 slots, paper color, filter, optional caption, and geometry shared with the exported PNG.
+- `src/components/portfolio/PhotoboothEditorControls.tsx`: focused controls for print layout, paper, photo filters, and caption.
+- `src/lib/photobooth-export.ts`: shared print geometry and browser Canvas compositor for PNG output matching the 4:3 camera crop; photos remain in browser memory and are never uploaded.
 - `src/components/portfolio/FeedbackFeed.tsx`: public feedback feed, one post per visitor, three server-enforced edits, live updates.
 - `src/components/portfolio/LobbyChat.tsx`: live shared chat, most recent 20 messages, inline composer without a second floating card.
 - `src/components/portfolio/PortfolioExperience.tsx`: also sends best-effort presence heartbeats while a named visitor is on the site.

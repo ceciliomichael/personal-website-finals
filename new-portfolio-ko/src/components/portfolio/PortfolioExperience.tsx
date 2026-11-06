@@ -20,6 +20,7 @@ import type { VisitorActivity, VisitorProfile } from "@/lib/visitors";
 import { AchievementToast } from "./AchievementToast";
 import { ExploreGalaxy } from "./ExploreGalaxy";
 import { NebulaJourney } from "./NebulaJourney";
+import { PhotoboothModal } from "./PhotoboothModal";
 import { ProfileScreen } from "./ProfileScreen";
 import { SectionModal } from "./SectionModal";
 import { SpaceBackdrop } from "./SpaceBackdrop";
@@ -367,16 +368,23 @@ export function PortfolioExperience() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {activeSection && sessionId && (
-          <SectionModal
-            key={activeSection.id}
-            section={activeSection}
-            community={community}
-            visitorName={profile?.displayName ?? ""}
-            visitorNumber={profile?.visitorNumber ?? ""}
-            onClose={() => setActiveSection(null)}
-          />
-        )}
+        {activeSection &&
+          sessionId &&
+          (activeSection.id === "photobooth" ? (
+            <PhotoboothModal
+              key={activeSection.id}
+              onClose={() => setActiveSection(null)}
+            />
+          ) : (
+            <SectionModal
+              key={activeSection.id}
+              section={activeSection}
+              community={community}
+              visitorName={profile?.displayName ?? ""}
+              visitorNumber={profile?.visitorNumber ?? ""}
+              onClose={() => setActiveSection(null)}
+            />
+          ))}
       </AnimatePresence>
 
       <AnimatePresence>

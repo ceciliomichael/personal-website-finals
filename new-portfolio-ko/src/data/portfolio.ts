@@ -3,6 +3,7 @@ import {
   FaBook,
   FaBrain,
   FaBullseye,
+  FaCamera,
   FaComments,
   FaCompass,
   FaEdit,
@@ -518,6 +519,18 @@ export const sections: PortfolioSection[] = [
           height: 1213,
         },
       ],
+    },
+  },
+  {
+    id: "photobooth",
+    title: "Photobooth",
+    icon: FaCamera,
+    color: "#f0a6d2",
+    position: { x: 80, y: 88 },
+    content: {
+      title: "Orbit Booth",
+      description:
+        "Capture or upload one to four photos, edit your film strip, and save it as a PNG. Everything stays on your device.",
     },
   },
   {

@@ -101,7 +101,7 @@ export const sections: PortfolioSection[] = [
         "Integrating Claude, OpenAI, Gemini, and DeepSeek APIs with autonomous agents, tool calling, and multi-agent orchestration.",
         "Designing my own agent architectures, including long-term memory for sustained recall over extended interactions and a dual-agent system that separates semantic reasoning from execution.",
       ],
-      image: "/images/profile/me.jpg",
+      image: "/images/profile/me.png",
     },
   },
   {
